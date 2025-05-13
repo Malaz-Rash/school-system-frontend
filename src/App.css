@@ -1,0 +1,36 @@
+body {
+    margin: 0;
+    font-family: 'Times New Roman', Times, serif !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  * {
+    font-family: 'Times New Roman', Times, serif !important;
+  }
+  
+  code {
+    font-family: 'Times New Roman', Times, serif !important;
+  }
+  
+  /* تنسيق النصوص العربية */
+  .arabic {
+    direction: rtl;
+    font-family: 'Times New Roman', Times, serif !important;
+    text-align: right;
+  }
+  
+  .arabic .form-label,
+  .arabic .form-check-label {
+    font-family: 'Times New Roman', Times, serif !important;
+    text-align: right;
+  }
+  
+  .arabic .breadcrumb {
+    direction: rtl;
+    font-family: 'Times New Roman', Times, serif !important;
+  }
+  
+  .arabic .lead {
+    font-family: 'Times New Roman', Times, serif !important;
+  }

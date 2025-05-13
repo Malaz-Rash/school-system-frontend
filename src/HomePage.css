@@ -1,0 +1,147 @@
+.home-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.card {
+  background-color: #fff;
+  padding: 3rem 4rem;
+  border-radius: 0;
+  text-align: center;
+  border-left: 10px solid #f28c38;
+  border-right: 10px solid #f28c38;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  max-width: 120px;
+  margin-bottom: 1rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.lead {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+}
+
+.section-btn {
+  background-color: #2e4b44;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 0;
+  margin: 0.5rem;
+  width: 200px;
+}
+
+.nav-btn {
+  background-color: #6c757d;
+  color: #fff;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 0;
+  margin: 0 0.5rem;
+}
+
+.nav-buttons {
+  margin-top: 3rem;
+  display: flex;
+  flex-direction: row; /* أزرار التنقل أفقية */
+  justify-content: center;
+}
+
+.breadcrumb {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+}
+
+.breadcrumb span {
+  margin: 0 0.5rem;
+}
+
+.stage-buttons {
+  display: flex;
+  flex-direction: column; /* أزرار المراحل/المستويات رأسية */
+  align-items: center;
+}
+
+/* تنسيق جديد للحقول في النموذج */
+.form-label {
+  text-align: left; /* محاذاة التسميات إلى اليسار */
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.form-control {
+  text-align: left; /* محاذاة الحقول إلى اليسار */
+  width: 100%;
+  max-width: 500px; /* عرض ثابت للحقول لتكون متناسقة */
+  margin: 0; /* إزالة أي هوامش افتراضية */
+}
+
+.mb-3 {
+  text-align: left; /* محاذاة كل حقل مع تسميته إلى اليسار */
+  max-width: 500px; /* ضمان تناسق العرض */
+  margin: 0 auto 1rem auto; /* محاذاة الكتلة في المنتصف مع مسافة سفلية */
+}
+
+/* تنسيق خاص للغة العربية */
+.arabic {
+  direction: rtl;
+  font-family: 'Tajawal', 'Arial', sans-serif;
+  text-align: right;
+}
+
+.arabic .form-label,
+.arabic .form-check-label {
+  font-family: 'Tajawal', 'Arial', sans-serif;
+  text-align: right;
+}
+
+.arabic .breadcrumb {
+  direction: rtl;
+  font-family: 'Tajawal', 'Arial', sans-serif;
+}
+
+.arabic .lead {
+  font-family: 'Tajawal', 'Arial', sans-serif;
+}
+
+.unseen-row {
+  background-color: #ff0000 !important;
+}
+
+.seen-row {
+  background-color: #cce5ff !important;
+}
