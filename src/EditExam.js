@@ -26,7 +26,7 @@ function EditExam() {
       }
 
       try {
-        const response = await fetch(`http://localhost:5000/api/exams`, {
+        const response = await fetch(`https://school-system-backend-yr14.onrender.com/api/exams`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -134,7 +134,7 @@ function EditExam() {
       console.log('Exam Data:', examData);
       console.log('Image Files:', imageFiles);
 
-      const response = await fetch(`http://localhost:5000/api/exams/${id}`, {
+      const response = await fetch(`https://school-system-backend-yr14.onrender.com/api/exams/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -232,7 +232,7 @@ function EditExam() {
                 <div className="mb-2">
                   <p>Current Image:</p>
                   <img
-                    src={`http://localhost:5000${q.image}`}
+                    src={`https://school-system-backend-yr14.onrender.com${q.image}`}
                     alt={`Diagram for question ${index + 1}`}
                     style={{ maxWidth: '300px', maxHeight: '300px', width: '100%', height: 'auto' }}
                   />

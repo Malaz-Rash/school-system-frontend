@@ -58,7 +58,7 @@ function RegisterForm() {
     };
 
     try {
-      const response = await fetch('http://localhost:5000/api/parent-register-student', {
+      const response = await fetch('https://school-system-backend-yr14.onrender.com/api/parent-register-student', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

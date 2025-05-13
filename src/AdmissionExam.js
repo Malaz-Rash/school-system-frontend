@@ -45,7 +45,7 @@ function AdmissionExam() {
       const fetchedExams = [];
       for (const subject of subjects) {
         try {
-          const response = await fetch(`http://localhost:5000/api/exams?division=${division}&stage=${stage}&level=${level}&subject=${subject}`);
+          const response = await fetch(`https://school-system-backend-yr14.onrender.com/api/exams?division=${division}&stage=${stage}&level=${level}&subject=${subject}`);
           const data = await response.json();
           if (response.ok && data.exam) {
             fetchedExams.push(data.exam);
@@ -92,7 +92,7 @@ function AdmissionExam() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/applications/${applicationId}/submit-exam`, {
+      const response = await fetch(`https://school-system-backend-yr14.onrender.com/api/applications/${applicationId}/submit-exam`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -232,7 +232,7 @@ function AdmissionExam() {
               {question.image && (
                 <div className="mb-2">
                   <img
-                    src={`http://localhost:5000${question.image}`}
+                    src={`https://school-system-backend-yr14.onrender.com${question.image}`}
                     alt={`Diagram for question ${index + 1}`}
                     style={{ maxWidth: '500px', maxHeight: '500px', width: '100%', height: 'auto' }}
                   />

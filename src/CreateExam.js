@@ -160,7 +160,7 @@ function CreateExam() {
       console.log('Questions:', questions);
       console.log('Image Files:', imageFiles);
 
-      const response = await fetch('http://localhost:5000/api/exams', {
+      const response = await fetch('https://school-system-backend-yr14.onrender.com/api/exams', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

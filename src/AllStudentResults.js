@@ -99,7 +99,7 @@ function AllStudentResults() {
       }
 
       try {
-        const response = await fetch(`http://localhost:5000/api/applications`, {
+        const response = await fetch(`https://school-system-backend-yr14.onrender.com/api/applications`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

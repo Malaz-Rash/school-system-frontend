@@ -20,7 +20,7 @@ function ViewExams() {
       }
 
       try {
-        const response = await fetch(`http://localhost:5000/api/exams`, {
+        const response = await fetch(`https://school-system-backend-yr14.onrender.com/api/exams`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ function ViewExams() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/exams/${examId}`, {
+      const response = await fetch(`https://school-system-backend-yr14.onrender.com/api/exams/${examId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

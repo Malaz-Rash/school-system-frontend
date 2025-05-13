@@ -32,7 +32,7 @@ function StudentExamResult() {
       try {
         // جلب بيانات الطلب للحصول على اسم الطالب، المرحلة، والمستوى
         console.log('Fetching application data from /api/applications/:id');
-        const appResponse = await fetch(`http://localhost:5000/api/applications/${applicationId}`, {
+        const appResponse = await fetch(`https://school-system-backend-yr14.onrender.com/api/applications/${applicationId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ function StudentExamResult() {
 
         // جلب نتائج الامتحان
         console.log('Fetching exam results from /api/applications/:id/results');
-        const response = await fetch(`http://localhost:5000/api/applications/${applicationId}/results`, {
+        const response = await fetch(`https://school-system-backend-yr14.onrender.com/api/applications/${applicationId}/results`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ function StudentExamResult() {
 
             // تحديث حالة seenByDepartmentHead إلى true
             console.log('Marking result as seen via /api/applications/:id/mark-seen');
-            const markSeenResponse = await fetch(`http://localhost:5000/api/applications/${applicationId}/mark-seen`, {
+            const markSeenResponse = await fetch(`https://school-system-backend-yr14.onrender.com/api/applications/${applicationId}/mark-seen`, {
               method: 'PUT',
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -173,7 +173,7 @@ function StudentExamResult() {
               {q.image ? (
                 <div className="mb-2">
                   <img
-                    src={`http://localhost:5000${q.image}`}
+                    src={`https://school-system-backend-yr14.onrender.com${q.image}`}
                     alt={`Diagram for question ${index + 1}`}
                     style={{ maxWidth: '300px', maxHeight: '300px', width: '100%', height: 'auto' }}
                     onError={(e) => console.log(`Failed to load image for question ${index + 1}:`, e)}
