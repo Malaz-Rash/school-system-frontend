@@ -124,14 +124,28 @@ function CreateExam() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Create Exam button clicked, starting handleSubmit...');
+
     const token = localStorage.getItem('token');
     if (!token) {
+      console.log('No token found in localStorage');
       setError('You must be logged in to create an exam.');
       return;
     }
+    console.log('Token found:', token);
 
     if (!division || !selectedStage || !selectedLevel) {
+      console.log('Validation failed: Division, Stage, or Level missing');
+      console.log('Division:', division);
+      console.log('Selected Stage:', selectedStage);
+      console.log('Selected Level:', selectedLevel);
       setError('Please select Division, Stage, and Level.');
+      return;
+    }
+
+    if (!questions || questions.length === 0) {
+      console.log('Validation failed: No questions provided');
+      setError('Please add at least one question.');
       return;
     }
 
@@ -143,7 +157,6 @@ function CreateExam() {
       formData.append('level', selectedLevel);
       formData.append('questions', JSON.stringify(questions));
 
-      // إضافة الصور باسم الحقل 'images'
       imageFiles.forEach((file) => {
         if (file) {
           formData.append('images', file);
@@ -167,18 +180,22 @@ function CreateExam() {
         body: formData,
       });
 
+      console.log('Response received from server:', response);
+
       const data = await response.json();
-      console.log('Server Response:', data);
+      console.log('Server Response Data:', data);
 
       if (response.ok) {
+        console.log('Exam created successfully, navigating to department-head-results');
         alert('Exam created successfully!');
         navigate('/department-head-results');
       } else {
+        console.log('Server returned an error:', data.error);
         setError(data.error || 'Error creating exam. Please try again.');
       }
     } catch (error) {
-      console.error('Error creating exam:', error);
-      setError('Error creating exam. Please try again.');
+      console.error('Error during fetch in handleSubmit:', error.message, error.stack);
+      setError('Error creating exam: ' + error.message);
     }
   };
 
