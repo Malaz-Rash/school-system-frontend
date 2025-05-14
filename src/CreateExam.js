@@ -143,14 +143,13 @@ function CreateExam() {
       formData.append('level', selectedLevel);
       formData.append('questions', JSON.stringify(questions));
 
-      // إضافة الصور إلى FormData باسم "images"
-      imageFiles.forEach((file) => {
+      // إضافة الصور مع مؤشر واضح لكل سؤال
+      imageFiles.forEach((file, index) => {
         if (file) {
-          formData.append('images', file);
+          formData.append(`images[${index}]`, file);
         }
       });
 
-      // تسجيل البيانات المُرسلة للتحقق
       console.log('Submitting exam with data:');
       console.log('Division:', division);
       console.log('Stage:', selectedStage);

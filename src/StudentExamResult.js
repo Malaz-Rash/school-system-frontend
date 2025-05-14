@@ -30,7 +30,6 @@ function StudentExamResult() {
       }
 
       try {
-        // جلب بيانات الطلب للحصول على اسم الطالب، المرحلة، والمستوى
         console.log('Fetching application data from /api/applications/:id');
         const appResponse = await fetch(`https://school-system-backend-yr14.onrender.com/api/applications/${applicationId}`, {
           method: 'GET',
@@ -51,7 +50,6 @@ function StudentExamResult() {
           return;
         }
 
-        // جلب نتائج الامتحان
         console.log('Fetching exam results from /api/applications/:id/results');
         const response = await fetch(`https://school-system-backend-yr14.onrender.com/api/applications/${applicationId}/results`, {
           method: 'GET',
@@ -66,7 +64,6 @@ function StudentExamResult() {
         console.log('Results Response data:', data);
 
         if (response.ok) {
-          // نأخذ نتيجة الامتحان التي تخص قسم المستخدم فقط
           const departmentResult = data.results.find(
             exam => {
               console.log('Checking exam:', exam);
@@ -78,7 +75,6 @@ function StudentExamResult() {
           if (departmentResult) {
             setResult(departmentResult);
 
-            // تحديث حالة seenByDepartmentHead إلى true
             console.log('Marking result as seen via /api/applications/:id/mark-seen');
             const markSeenResponse = await fetch(`https://school-system-backend-yr14.onrender.com/api/applications/${applicationId}/mark-seen`, {
               method: 'PUT',
@@ -165,12 +161,12 @@ function StudentExamResult() {
           <p>{result.comments}</p>
         </div>
         {result.results.map((q, index) => {
-          console.log(`Question ${index + 1} image path:`, q.image); // تسجيل مسار الصورة
-          console.log(`Does image exist for question ${index + 1}?:`, !!q.image); // تسجيل ما إذا كان هناك صورة
+          console.log(`Question ${index + 1} image path:`, q.image);
+          console.log(`Does image exist for question ${index + 1}?:`, !!q.image);
           return (
             <div key={index} className="mb-3">
               <p><strong>{`Question ${index + 1}: `}</strong>{q.question}</p>
-              {q.image ? (
+              {q.image && q.image !== '' ? (
                 <div className="mb-2">
                   <img
                     src={`https://school-system-backend-yr14.onrender.com${q.image}`}

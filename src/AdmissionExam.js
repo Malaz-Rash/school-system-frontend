@@ -52,11 +52,9 @@ function AdmissionExam() {
             console.log(`Exam found for ${subject}:`, data.exam);
           } else {
             console.log(`No exam found for ${subject}`);
-            // لا نوقف العملية، بل نستمر في جلب الامتحانات الأخرى
           }
         } catch (error) {
           console.error(`Error fetching exam for ${subject}:`, error);
-          // لا نوقف العملية، بل نستمر في جلب الامتحانات الأخرى
         }
       }
 
@@ -229,7 +227,7 @@ function AdmissionExam() {
           {exams[currentExamIndex].questions.map((question, index) => (
             <div key={index} className="mb-3">
               <label className="form-label">{isArabic ? `سؤال ${index + 1}: ${question.question}` : `Question ${index + 1}: ${question.question}`}</label>
-              {question.image && (
+              {question.image && question.image !== '' && (
                 <div className="mb-2">
                   <img
                     src={`https://school-system-backend-yr14.onrender.com${question.image}`}

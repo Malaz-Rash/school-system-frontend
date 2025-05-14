@@ -45,7 +45,6 @@ function EditExam() {
               stage: exam.stage,
               level: exam.level,
             });
-            // تهيئة imageFiles بناءً على عدد الأسئلة
             setImageFiles(new Array(exam.questions.length).fill(null));
           } else {
             setError('Exam not found.');
@@ -123,10 +122,9 @@ function EditExam() {
       formData.append('level', examData.level);
       formData.append('questions', JSON.stringify(examData.questions));
 
-      // إضافة الصور الجديدة إلى FormData
-      imageFiles.forEach((file) => {
+      imageFiles.forEach((file, index) => {
         if (file) {
-          formData.append('images', file);
+          formData.append(`images[${index}]`, file);
         }
       });
 
