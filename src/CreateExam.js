@@ -143,10 +143,10 @@ function CreateExam() {
       formData.append('level', selectedLevel);
       formData.append('questions', JSON.stringify(questions));
 
-      // إضافة الصور مع مؤشر واضح لكل سؤال
-      imageFiles.forEach((file, index) => {
+      // إضافة الصور باسم الحقل 'images'
+      imageFiles.forEach((file) => {
         if (file) {
-          formData.append(`images[${index}]`, file);
+          formData.append('images', file);
         }
       });
 

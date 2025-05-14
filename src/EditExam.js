@@ -122,9 +122,9 @@ function EditExam() {
       formData.append('level', examData.level);
       formData.append('questions', JSON.stringify(examData.questions));
 
-      imageFiles.forEach((file, index) => {
+      imageFiles.forEach((file) => {
         if (file) {
-          formData.append(`images[${index}]`, file);
+          formData.append('images', file);
         }
       });
 
