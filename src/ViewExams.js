@@ -30,7 +30,6 @@ function ViewExams() {
 
         const data = await response.json();
         if (response.ok) {
-          // تصفية الامتحانات بناءً على قسم المستخدم ومادته
           const filteredExams = data.exams.filter(
             exam => exam.subject === department && exam.division === division
           );
@@ -105,6 +104,7 @@ function ViewExams() {
                   <th>Stage</th>
                   <th>Level</th>
                   <th>Number of Questions</th>
+                  <th>Questions</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -116,6 +116,24 @@ function ViewExams() {
                     <td>{exam.stage}</td>
                     <td>{exam.level}</td>
                     <td>{exam.questions.length}</td>
+                    <td>
+                      {exam.questions.map((question, index) => (
+                        <div key={index} className="mb-2">
+                          <p><strong>Question {index + 1}:</strong> {question.question}</p>
+                          {question.image && question.image !== '' && (
+                            <div className="mb-2">
+                              <img
+                                src={question.image} // استخدام الرابط مباشرة من Cloudinary
+                                alt={`Diagram for question ${index + 1}`}
+                                style={{ maxWidth: '300px', maxHeight: '300px', width: '100%', height: 'auto' }}
+                              />
+                            </div>
+                          )}
+                          <p><strong>Options:</strong> {question.options.join(', ')}</p>
+                          <p><strong>Correct Answer:</strong> {question.correctAnswer}</p>
+                        </div>
+                      ))}
+                    </td>
                     <td>
                       <button
                         className="btn btn-primary btn-sm me-2"

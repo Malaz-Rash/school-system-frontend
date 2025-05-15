@@ -21,7 +21,6 @@ function AdmissionExam() {
   const [subjects, setSubjects] = useState([]);
   const [error, setError] = useState('');
 
-  // تحديد المواد بناءً على القسم مع إعادة الترتيب
   useEffect(() => {
     if (division === 'British') {
       setSubjects(['Math', 'English', 'Science']);
@@ -30,14 +29,12 @@ function AdmissionExam() {
     }
   }, [division]);
 
-  // تحديث المواد بناءً على اختيار الطالب الأمريكي للغة العربية
   useEffect(() => {
     if (division === 'American' && isArabicSpeaker) {
       setSubjects(['Math', 'English', 'Arabic']);
     }
   }, [isArabicSpeaker, division]);
 
-  // جلب الامتحانات عند تحديد المواد
   useEffect(() => {
     const fetchExams = async () => {
       if (subjects.length === 0) return;
@@ -71,7 +68,6 @@ function AdmissionExam() {
     }
   }, [subjects, isArabicSpeaker, division, stage, level]);
 
-  // التعامل مع اختيار الطالب الأمريكي للغة العربية
   const handleArabicSpeakerSelection = (isSpeaker) => {
     setIsArabicSpeaker(isSpeaker);
   };
@@ -230,7 +226,7 @@ function AdmissionExam() {
               {question.image && question.image !== '' && (
                 <div className="mb-2">
                   <img
-                    src={`https://school-system-backend-yr14.onrender.com${question.image}`}
+                    src={question.image} // استخدام الرابط مباشرة من Cloudinary
                     alt={`Diagram for question ${index + 1}`}
                     style={{ maxWidth: '500px', maxHeight: '500px', width: '100%', height: 'auto' }}
                   />

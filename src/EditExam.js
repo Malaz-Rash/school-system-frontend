@@ -226,11 +226,11 @@ function EditExam() {
                 onChange={(e) => handleQuestionChange(index, 'question', e.target.value)}
                 required
               />
-              {q.image && (
+              {q.image && q.image !== '' && (
                 <div className="mb-2">
                   <p>Current Image:</p>
                   <img
-                    src={`https://school-system-backend-yr14.onrender.com${q.image}`}
+                    src={q.image} // استخدام الرابط مباشرة من Cloudinary
                     alt={`Diagram for question ${index + 1}`}
                     style={{ maxWidth: '300px', maxHeight: '300px', width: '100%', height: 'auto' }}
                   />

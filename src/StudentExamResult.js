@@ -12,7 +12,6 @@ function StudentExamResult() {
 
   useEffect(() => {
     const fetchApplication = async () => {
-      // التحقق من أن الـ id صالح قبل إرسال الطلب
       if (!id || id === 'undefined') {
         setError('Invalid application ID. Please go back and select a valid student.');
         return;
@@ -133,10 +132,10 @@ function StudentExamResult() {
                     </span>
                     <strong>Question {resultIndex + 1}:</strong> {result.question}
                   </p>
-                  {result.image && (
+                  {result.image && result.image !== '' && (
                     <div className="mb-2">
                       <img
-                        src={`https://school-system-backend-yr14.onrender.com${result.image}`}
+                        src={result.image} // استخدام الرابط مباشرة من Cloudinary
                         alt={`Diagram for question ${resultIndex + 1}`}
                         style={{ maxWidth: '300px', maxHeight: '300px', width: '100%', height: 'auto' }}
                       />
