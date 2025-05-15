@@ -1,145 +1,89 @@
 import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import bgImage from './bg1.jpg';
 import './HomePage.css';
 
 function StudentExamResult() {
-  const { applicationId } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [result, setResult] = useState(null);
   const [application, setApplication] = useState(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchResult = async () => {
+    const fetchApplication = async () => {
       const token = localStorage.getItem('token');
-      const department = localStorage.getItem('department');
-      console.log('Fetching result for applicationId:', applicationId);
-      console.log('Token:', token);
-      console.log('Department:', department);
-
       if (!token) {
         setError('You must be logged in to view this page.');
         return;
       }
 
-      if (!department) {
-        setError('Department information is missing in local storage.');
-        return;
-      }
-
       try {
-        console.log('Fetching application data from /api/applications/:id');
-        const appResponse = await fetch(`https://school-system-backend-yr14.onrender.com/api/applications/${applicationId}`, {
+        const response = await fetch(`https://school-system-backend-yr14.onrender.com/api/applications/${id}`, {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
           },
         });
 
-        console.log('Application Response status:', appResponse.status);
-        const appData = await appResponse.json();
-        console.log('Application Response data:', appData);
-
-        if (appResponse.ok) {
-          setApplication(appData.application);
-        } else {
-          setError(appData.error || 'Error fetching application data.');
-          return;
-        }
-
-        console.log('Fetching exam results from /api/applications/:id/results');
-        const response = await fetch(`https://school-system-backend-yr14.onrender.com/api/applications/${applicationId}/results`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
-        console.log('Results Response status:', response.status);
         const data = await response.json();
-        console.log('Results Response data:', data);
-
         if (response.ok) {
-          const departmentResult = data.results.find(
-            exam => {
-              console.log('Checking exam:', exam);
-              return exam.subject === department;
-            }
-          );
-          console.log('Department Result:', departmentResult);
-
-          if (departmentResult) {
-            setResult(departmentResult);
-
-            console.log('Marking result as seen via /api/applications/:id/mark-seen');
-            const markSeenResponse = await fetch(`https://school-system-backend-yr14.onrender.com/api/applications/${applicationId}/mark-seen`, {
-              method: 'PUT',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              },
-            });
-            const markSeenData = await markSeenResponse.json();
-            console.log('Mark seen response:', markSeenData);
-          } else {
-            setError('No results found for your department.');
-          }
+          setApplication(data.application);
         } else {
-          setError(data.error || 'Error fetching result.');
+          setError(data.error || 'Error fetching application details.');
         }
       } catch (error) {
-        console.error('Error fetching result:', error);
-        setError('Error fetching result. Please try again.');
+        console.error('Error fetching application:', error);
+        setError('Error fetching application details. Please try again.');
       }
     };
 
-    fetchResult();
-  }, [applicationId]);
+    fetchApplication();
+  }, [id]);
 
-  if (error) {
+  const markAsSeen = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError('You must be logged in to perform this action.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://school-system-backend-yr14.onrender.com/api/applications/${id}/mark-seen`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert('Results marked as seen.');
+        navigate('/all-student-results');
+      } else {
+        setError(data.error || 'Error marking results as seen.');
+      }
+    } catch (error) {
+      console.error('Error marking results as seen:', error);
+      setError('Error marking results as seen. Please try again.');
+    }
+  };
+
+  if (!application) {
     return (
       <div className="home-container" style={{ backgroundImage: `url(${bgImage})` }}>
         <div className="card">
-          <p className="text-danger">{error}</p>
-          <div className="nav-buttons">
-            <button
-              onClick={() => navigate(-1)}
-              className="btn nav-btn"
-            >
-              Go Back
-            </button>
-            <Link to="/" className="btn nav-btn">
-              Home
-            </Link>
-          </div>
+          <h2>Loading...</h2>
+          {error && <p className="text-danger">{error}</p>}
         </div>
       </div>
     );
   }
 
-  if (!result || !application) {
-    return (
-      <div className="home-container" style={{ backgroundImage: `url(${bgImage})` }}>
-        <div className="card">
-          <p>Loading result...</p>
-          <div className="nav-buttons">
-            <button
-              onClick={() => navigate(-1)}
-              className="btn nav-btn"
-            >
-              Go Back
-            </button>
-            <Link to="/" className="btn nav-btn">
-              Home
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const department = localStorage.getItem('department');
+  const relevantExams = application.exams.filter(exam => exam.subject === department);
 
   return (
     <div className="home-container" style={{ backgroundImage: `url(${bgImage})` }}>
@@ -151,48 +95,46 @@ function StudentExamResult() {
           style={{ maxWidth: '40px' }}
         />
         <h1 className="title mb-2">New Generation International Schools</h1>
-        <h2 className="subtitle mb-2">Student Exam Result</h2>
-        <p className="lead mb-3">
-          {`Result for ${application.studentId?.fullNameEn || 'N/A'} (Stage: ${application.stage}, Level: ${application.level})`}
-        </p>
-        <p className="mb-3">{`Subject: ${result.subject}`}</p>
-        <div className="mb-3">
-          <h5>Score: {result.score}%</h5>
-          <p>{result.comments}</p>
-        </div>
-        {result.results.map((q, index) => {
-          console.log(`Question ${index + 1} image path:`, q.image);
-          console.log(`Does image exist for question ${index + 1}?:`, !!q.image);
-          return (
-            <div key={index} className="mb-3">
-              <p><strong>{`Question ${index + 1}: `}</strong>{q.question}</p>
-              {q.image && q.image !== '' ? (
-                <div className="mb-2">
-                  <img
-                    src={`https://school-system-backend-yr14.onrender.com${q.image}`}
-                    alt={`Diagram for question ${index + 1}`}
-                    style={{ maxWidth: '300px', maxHeight: '300px', width: '100%', height: 'auto' }}
-                    onError={(e) => console.log(`Failed to load image for question ${index + 1}:`, e)}
-                  />
+        <h2 className="subtitle mb-2">Student Exam Results</h2>
+        <p className="lead mb-3">Review Student Performance</p>
+        {error && <p className="text-danger mb-3">{error}</p>}
+        {relevantExams.length === 0 ? (
+          <p>No exams found for your department.</p>
+        ) : (
+          relevantExams.map((exam, examIndex) => (
+            <div key={examIndex} className="mb-4">
+              <h3>{exam.subject} Exam</h3>
+              <p>Score: {Math.round(exam.score)}%</p>
+              <p>{exam.comments}</p>
+              {exam.results.map((result, resultIndex) => (
+                <div key={resultIndex} className="mb-3 p-3 border rounded">
+                  <p>
+                    <span style={{ marginRight: '10px' }}>
+                      {result.isCorrect ? '✅' : '❌'}
+                    </span>
+                    <strong>Question {resultIndex + 1}:</strong> {result.question}
+                  </p>
+                  {result.image && (
+                    <div className="mb-2">
+                      <img
+                        src={`https://school-system-backend-yr14.onrender.com${result.image}`}
+                        alt={`Diagram for question ${resultIndex + 1}`}
+                        style={{ maxWidth: '300px', maxHeight: '300px', width: '100%', height: 'auto' }}
+                      />
+                    </div>
+                  )}
+                  <p><strong>Student's Answer:</strong> {result.studentAnswer}</p>
+                  <p><strong>Correct Answer:</strong> {result.correctAnswer}</p>
                 </div>
-              ) : (
-                <p>No image available for this question.</p>
-              )}
-              <p><strong>Student Answer: </strong>{q.studentAnswer}</p>
-              <p><strong>Correct Answer: </strong>{q.correctAnswer}</p>
-              <p className={q.isCorrect ? 'text-success' : 'text-danger'}>
-                {q.isCorrect ? 'Correct' : 'Incorrect'}
-              </p>
+              ))}
             </div>
-          );
-        })}
+          ))
+        )}
         <div className="nav-buttons">
-          <button
-            className="btn nav-btn"
-            onClick={() => navigate('/all-student-results')}
-          >
-            Back to Results
+          <button onClick={markAsSeen} className="btn section-btn me-2">
+            Mark as Seen
           </button>
+          <Link to="/all-student-results" className="btn nav-btn">Back to Results List</Link>
           <Link to="/" className="btn nav-btn">Home</Link>
         </div>
       </div>
