@@ -12,6 +12,12 @@ function StudentExamResult() {
 
   useEffect(() => {
     const fetchApplication = async () => {
+      // التحقق من أن الـ id صالح قبل إرسال الطلب
+      if (!id || id === 'undefined') {
+        setError('Invalid application ID. Please go back and select a valid student.');
+        return;
+      }
+
       const token = localStorage.getItem('token');
       if (!token) {
         setError('You must be logged in to view this page.');
@@ -71,12 +77,26 @@ function StudentExamResult() {
     }
   };
 
+  if (error) {
+    return (
+      <div className="home-container" style={{ backgroundImage: `url(${bgImage})` }}>
+        <div className="card">
+          <h2>Error</h2>
+          <p className="text-danger">{error}</p>
+          <div className="nav-buttons">
+            <Link to="/all-student-results" className="btn nav-btn">Back to Results List</Link>
+            <Link to="/" className="btn nav-btn">Home</Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!application) {
     return (
       <div className="home-container" style={{ backgroundImage: `url(${bgImage})` }}>
         <div className="card">
           <h2>Loading...</h2>
-          {error && <p className="text-danger">{error}</p>}
         </div>
       </div>
     );
@@ -97,14 +117,13 @@ function StudentExamResult() {
         <h1 className="title mb-2">New Generation International Schools</h1>
         <h2 className="subtitle mb-2">Student Exam Results</h2>
         <p className="lead mb-3">Review Student Performance</p>
-        {error && <p className="text-danger mb-3">{error}</p>}
         {relevantExams.length === 0 ? (
           <p>No exams found for your department.</p>
         ) : (
           relevantExams.map((exam, examIndex) => (
             <div key={examIndex} className="mb-4">
               <h3>{exam.subject} Exam</h3>
-              <p>Score: {Math.round(exam.score)}%</p>
+              <p>Score: {exam.score}%</p>
               <p>{exam.comments}</p>
               {exam.results.map((result, resultIndex) => (
                 <div key={resultIndex} className="mb-3 p-3 border rounded">
