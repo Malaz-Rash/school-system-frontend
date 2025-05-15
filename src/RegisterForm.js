@@ -8,10 +8,10 @@ function RegisterForm() {
   const location = useLocation();
   const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
-  const division = searchParams.get('division');
-  const stage = searchParams.get('stage');
-  const subStage = searchParams.get('subStage');
-  const level = searchParams.get('level');
+  const division = searchParams.get('division') || '';
+  const stage = searchParams.get('stage') || '';
+  const subStage = searchParams.get('subStage') || '';
+  const level = searchParams.get('level') || '';
 
   const [formData, setFormData] = useState({
     fullNameAr: '',
@@ -31,6 +31,7 @@ function RegisterForm() {
     address: '',
     medicalConditions: '',
   });
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,7 +40,21 @@ function RegisterForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // التحقق من أن division وstage وlevel ليست فارغة
+    if (!division || !stage || !level) {
+      setError('Division, Stage, and Level are required. Please go back and select them.');
+      return;
+    }
+
+    // التحقق من أن fullNameEn ليس فارغًا
+    if (!formData.fullNameEn) {
+      setError('Full Name (English) is required.');
+      return;
+    }
+
     const dataToSubmit = {
+      name: formData.fullNameEn,
       fullNameAr: formData.fullNameAr,
       fullNameEn: formData.fullNameEn,
       nationalId: formData.nationalId,
@@ -69,14 +84,13 @@ function RegisterForm() {
       const data = await response.json();
       if (response.ok) {
         alert('Registration submitted successfully!');
-        // تمرير applicationId إلى صفحة الامتحان
         navigate(`/admission-exam?division=${division}&stage=${stage}${subStage ? `&subStage=${subStage}` : ''}&level=${level}&applicationId=${data.application._id}`);
       } else {
-        alert('Error submitting registration. Please try again.');
+        setError(data.error || 'Error submitting registration. Please try again.');
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Error submitting registration. Please try again.');
+      console.error('Error submitting registration:', error);
+      setError('Error submitting registration: Network issue or server error. Please try again.');
     }
   };
 
@@ -94,6 +108,7 @@ function RegisterForm() {
           style={{ maxWidth: '40px' }}
         />
         <p className="lead mb-3">Student Registration Form</p>
+        {error && <p className="text-danger mb-3">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="fullNameAr" className="form-label">Full Name (Arabic)</label>
@@ -104,7 +119,6 @@ function RegisterForm() {
               name="fullNameAr"
               value={formData.fullNameAr}
               onChange={handleChange}
-              required
             />
           </div>
           <div className="mb-3">
@@ -128,7 +142,6 @@ function RegisterForm() {
               name="nationalId"
               value={formData.nationalId}
               onChange={handleChange}
-              required
             />
           </div>
           <div className="mb-3">
@@ -140,7 +153,6 @@ function RegisterForm() {
               name="birthDate"
               value={formData.birthDate}
               onChange={handleChange}
-              required
             />
           </div>
           <div className="mb-3">
@@ -152,7 +164,6 @@ function RegisterForm() {
               name="passportNumber"
               value={formData.passportNumber}
               onChange={handleChange}
-              required
             />
           </div>
           <div className="mb-3">
@@ -164,7 +175,6 @@ function RegisterForm() {
               name="nationality"
               value={formData.nationality}
               onChange={handleChange}
-              required
             />
           </div>
           <div className="mb-3">
@@ -201,7 +211,6 @@ function RegisterForm() {
               name="fatherNationalId"
               value={formData.fatherNationalId}
               onChange={handleChange}
-              required
             />
           </div>
           <div className="mb-3">
@@ -213,7 +222,6 @@ function RegisterForm() {
               name="fatherPhone"
               value={formData.fatherPhone}
               onChange={handleChange}
-              required
             />
           </div>
           <div className="mb-3">
@@ -225,7 +233,6 @@ function RegisterForm() {
               name="motherPhone"
               value={formData.motherPhone}
               onChange={handleChange}
-              required
             />
           </div>
           <div className="mb-3">
@@ -237,7 +244,6 @@ function RegisterForm() {
               name="fatherJob"
               value={formData.fatherJob}
               onChange={handleChange}
-              required
             />
           </div>
           <div className="mb-3">
@@ -249,7 +255,6 @@ function RegisterForm() {
               name="fatherWorkplace"
               value={formData.fatherWorkplace}
               onChange={handleChange}
-              required
             />
           </div>
           <div className="mb-3">
