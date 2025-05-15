@@ -157,12 +157,17 @@ function CreateExam() {
       formData.append('level', selectedLevel);
       formData.append('questions', JSON.stringify(questions));
 
-      // إضافة الصور مع معرف السؤال (index)
+      // جمع الـ indices للأسئلة التي تحتوي على صور
+      const imageIndices = [];
       imageFiles.forEach((file, index) => {
         if (file) {
-          formData.append(`images[${index}]`, file);
+          imageIndices.push(index);
+          formData.append('images', file);
         }
       });
+
+      // إضافة الـ indices إلى FormData
+      formData.append('imageIndices', JSON.stringify(imageIndices));
 
       console.log('Submitting exam with data:');
       console.log('Division:', division);
@@ -172,6 +177,7 @@ function CreateExam() {
       console.log('Subject:', subject);
       console.log('Questions:', questions);
       console.log('Image Files:', imageFiles);
+      console.log('Image Indices:', imageIndices);
 
       const response = await fetch('https://school-system-backend-yr14.onrender.com/api/exams', {
         method: 'POST',

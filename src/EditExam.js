@@ -122,15 +122,20 @@ function EditExam() {
       formData.append('level', examData.level);
       formData.append('questions', JSON.stringify(examData.questions));
 
+      const imageIndices = [];
       imageFiles.forEach((file, index) => {
         if (file) {
-          formData.append(`images[${index}]`, file);
+          imageIndices.push(index);
+          formData.append('images', file);
         }
       });
+
+      formData.append('imageIndices', JSON.stringify(imageIndices));
 
       console.log('Submitting updated exam with data:');
       console.log('Exam Data:', examData);
       console.log('Image Files:', imageFiles);
+      console.log('Image Indices:', imageIndices);
 
       const response = await fetch(`https://school-system-backend-yr14.onrender.com/api/exams/${id}`, {
         method: 'PUT',
