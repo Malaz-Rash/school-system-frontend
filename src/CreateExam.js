@@ -157,9 +157,10 @@ function CreateExam() {
       formData.append('level', selectedLevel);
       formData.append('questions', JSON.stringify(questions));
 
-      imageFiles.forEach((file) => {
+      // إضافة الصور مع معرف السؤال (index)
+      imageFiles.forEach((file, index) => {
         if (file) {
-          formData.append('images', file);
+          formData.append(`images[${index}]`, file);
         }
       });
 
