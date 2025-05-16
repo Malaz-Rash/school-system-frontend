@@ -19,7 +19,8 @@ function StudentExamResult() {
 
       const token = localStorage.getItem('token');
       if (!token) {
-        setError('You must be logged in to view this page.');
+        setError('Your session has expired or you are not logged in. Please log in again.');
+        setTimeout(() => navigate('/login'), 3000); // إعادة توجيه بعد 3 ثوانٍ
         return;
       }
 
@@ -36,21 +37,28 @@ function StudentExamResult() {
         if (response.ok) {
           setApplication(data.application);
         } else {
-          setError(data.error || 'Error fetching application details.');
+          if (response.status === 401 || response.status === 403) {
+            setError('Your session has expired. Please log in again.');
+            localStorage.removeItem('token'); // إزالة الـ token القديم
+            setTimeout(() => navigate('/login'), 3000); // إعادة توجيه بعد 3 ثوانٍ
+          } else {
+            setError(data.error || 'Error fetching application details.');
+          }
         }
       } catch (error) {
         console.error('Error fetching application:', error);
-        setError('Error fetching application details. Please try again.');
+        setError('Error fetching application details due to network issue. Please try again.');
       }
     };
 
     fetchApplication();
-  }, [id]);
+  }, [id, navigate]);
 
   const markAsSeen = async () => {
     const token = localStorage.getItem('token');
     if (!token) {
-      setError('You must be logged in to perform this action.');
+      setError('Your session has expired or you are not logged in. Please log in again.');
+      setTimeout(() => navigate('/login'), 3000);
       return;
     }
 
@@ -68,11 +76,17 @@ function StudentExamResult() {
         alert('Results marked as seen.');
         navigate('/all-student-results');
       } else {
-        setError(data.error || 'Error marking results as seen.');
+        if (response.status === 401 || response.status === 403) {
+          setError('Your session has expired. Please log in again.');
+          localStorage.removeItem('token');
+          setTimeout(() => navigate('/login'), 3000);
+        } else {
+          setError(data.error || 'Error marking results as seen.');
+        }
       }
     } catch (error) {
       console.error('Error marking results as seen:', error);
-      setError('Error marking results as seen. Please try again.');
+      setError('Error marking results as seen due to network issue. Please try again.');
     }
   };
 
@@ -135,7 +149,7 @@ function StudentExamResult() {
                   {result.image && result.image !== '' && (
                     <div className="mb-2">
                       <img
-                        src={result.image} // استخدام الرابط مباشرة من Cloudinary
+                        src={result.image}
                         alt={`Diagram for question ${resultIndex + 1}`}
                         style={{ maxWidth: '300px', maxHeight: '300px', width: '100%', height: 'auto' }}
                       />
