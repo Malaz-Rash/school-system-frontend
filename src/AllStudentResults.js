@@ -29,6 +29,9 @@ function AllStudentResults() {
         const data = await response.json();
         if (response.ok) {
           setApplications(data.applications);
+          if (data.applications.length === 0) {
+            setError('No student applications found. Please register a new student first.');
+          }
         } else {
           setError(data.error || 'Error fetching applications.');
         }
@@ -54,8 +57,8 @@ function AllStudentResults() {
         <h2 className="subtitle mb-2">All Student Results</h2>
         <p className="lead mb-3">View Exam Results for All Students</p>
         {error && <p className="text-danger mb-3">{error}</p>}
-        {applications.length === 0 ? (
-          <p>No applications found.</p>
+        {applications.length === 0 && !error ? (
+          <p>No applications found. Please register a new student first.</p>
         ) : (
           <table className="table table-striped">
             <thead>
@@ -75,7 +78,7 @@ function AllStudentResults() {
                   <td>{app.stage}</td>
                   <td>{app.level}</td>
                   <td>
-                    {app._id ? (
+                    {app._id && app._id !== 'undefined' ? (
                       <Link
                         to={`/student-exam-result/${app._id}`}
                         className="btn btn-primary btn-sm"
