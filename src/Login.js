@@ -24,6 +24,7 @@ function Login() {
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem('token', data.token);
+        localStorage.setItem('refreshToken', data.refreshToken); // تخزين الـ refreshToken
         localStorage.setItem('role', data.role);
         localStorage.setItem('department', data.department);
         localStorage.setItem('division', data.division);
