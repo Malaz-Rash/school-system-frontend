@@ -13,14 +13,14 @@ function StudentExamResult() {
   useEffect(() => {
     const fetchApplication = async () => {
       if (!id || id === 'undefined') {
-        setError('Invalid application ID. Please go back and select a valid student.');
+        setError('معرف الطلب غير صالح. يرجى العودة واختيار طالب صالح.');
         return;
       }
 
       const token = localStorage.getItem('token');
       if (!token) {
-        setError('Your session has expired or you are not logged in. Please log in again.');
-        setTimeout(() => navigate('/login'), 3000); // إعادة توجيه بعد 3 ثوانٍ
+        setError('انتهت جلستك أو أنك لم تسجل الدخول. يرجى تسجيل الدخول مرة أخرى.');
+        setTimeout(() => navigate('/login'), 3000);
         return;
       }
 
@@ -38,16 +38,16 @@ function StudentExamResult() {
           setApplication(data.application);
         } else {
           if (response.status === 401 || response.status === 403) {
-            setError('Your session has expired. Please log in again.');
-            localStorage.removeItem('token'); // إزالة الـ token القديم
-            setTimeout(() => navigate('/login'), 3000); // إعادة توجيه بعد 3 ثوانٍ
+            setError('انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.');
+            localStorage.removeItem('token');
+            setTimeout(() => navigate('/login'), 3000);
           } else {
-            setError(data.error || 'Error fetching application details.');
+            setError(data.error || 'خطأ في جلب تفاصيل الطلب.');
           }
         }
       } catch (error) {
         console.error('Error fetching application:', error);
-        setError('Error fetching application details due to network issue. Please try again.');
+        setError('خطأ في جلب تفاصيل الطلب بسبب مشكلة في الشبكة. يرجى المحاولة مرة أخرى.');
       }
     };
 
@@ -57,7 +57,7 @@ function StudentExamResult() {
   const markAsSeen = async () => {
     const token = localStorage.getItem('token');
     if (!token) {
-      setError('Your session has expired or you are not logged in. Please log in again.');
+      setError('انتهت جلستك أو أنك لم تسجل الدخول. يرجى تسجيل الدخول مرة أخرى.');
       setTimeout(() => navigate('/login'), 3000);
       return;
     }
@@ -73,20 +73,20 @@ function StudentExamResult() {
 
       const data = await response.json();
       if (response.ok) {
-        alert('Results marked as seen.');
+        alert('تم وضع علامة "تمت المشاهدة" على النتائج بنجاح.');
         navigate('/all-student-results');
       } else {
         if (response.status === 401 || response.status === 403) {
-          setError('Your session has expired. Please log in again.');
+          setError('انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.');
           localStorage.removeItem('token');
           setTimeout(() => navigate('/login'), 3000);
         } else {
-          setError(data.error || 'Error marking results as seen.');
+          setError(data.error || 'خطأ في وضع علامة "تمت المشاهدة".');
         }
       }
     } catch (error) {
       console.error('Error marking results as seen:', error);
-      setError('Error marking results as seen due to network issue. Please try again.');
+      setError('خطأ في وضع علامة "تمت المشاهدة" بسبب مشكلة في الشبكة. يرجى المحاولة مرة أخرى.');
     }
   };
 
@@ -94,11 +94,11 @@ function StudentExamResult() {
     return (
       <div className="home-container" style={{ backgroundImage: `url(${bgImage})` }}>
         <div className="card">
-          <h2>Error</h2>
+          <h2>خطأ</h2>
           <p className="text-danger">{error}</p>
           <div className="nav-buttons">
-            <Link to="/all-student-results" className="btn nav-btn">Back to Results List</Link>
-            <Link to="/" className="btn nav-btn">Home</Link>
+            <Link to="/all-student-results" className="btn nav-btn">العودة إلى قائمة النتائج</Link>
+            <Link to="/" className="btn nav-btn">الرئيسية</Link>
           </div>
         </div>
       </div>
@@ -109,7 +109,7 @@ function StudentExamResult() {
     return (
       <div className="home-container" style={{ backgroundImage: `url(${bgImage})` }}>
         <div className="card">
-          <h2>Loading...</h2>
+          <h2>جارٍ التحميل...</h2>
         </div>
       </div>
     );
@@ -128,15 +128,15 @@ function StudentExamResult() {
           style={{ maxWidth: '40px' }}
         />
         <h1 className="title mb-2">New Generation International Schools</h1>
-        <h2 className="subtitle mb-2">Student Exam Results</h2>
-        <p className="lead mb-3">Review Student Performance</p>
+        <h2 className="subtitle mb-2">نتائج امتحان الطالب</h2>
+        <p className="lead mb-3">مراجعة أداء الطالب</p>
         {relevantExams.length === 0 ? (
-          <p>No exams found for your department.</p>
+          <p>لا توجد امتحانات لقسمك.</p>
         ) : (
           relevantExams.map((exam, examIndex) => (
             <div key={examIndex} className="mb-4">
-              <h3>{exam.subject} Exam</h3>
-              <p>Score: {exam.score}%</p>
+              <h3>امتحان {exam.subject}</h3>
+              <p>الدرجة: {exam.score}%</p>
               <p>{exam.comments}</p>
               {exam.results.map((result, resultIndex) => (
                 <div key={resultIndex} className="mb-3 p-3 border rounded">
@@ -144,7 +144,7 @@ function StudentExamResult() {
                     <span style={{ marginRight: '10px' }}>
                       {result.isCorrect ? '✅' : '❌'}
                     </span>
-                    <strong>Question {resultIndex + 1}:</strong> {result.question}
+                    <strong>السؤال {resultIndex + 1}:</strong> {result.question}
                   </p>
                   {result.image && result.image !== '' && (
                     <div className="mb-2">
@@ -155,8 +155,8 @@ function StudentExamResult() {
                       />
                     </div>
                   )}
-                  <p><strong>Student's Answer:</strong> {result.studentAnswer}</p>
-                  <p><strong>Correct Answer:</strong> {result.correctAnswer}</p>
+                  <p><strong>إجابة الطالب:</strong> {result.studentAnswer}</p>
+                  <p><strong>الإجابة الصحيحة:</strong> {result.correctAnswer}</p>
                 </div>
               ))}
             </div>
@@ -164,10 +164,10 @@ function StudentExamResult() {
         )}
         <div className="nav-buttons">
           <button onClick={markAsSeen} className="btn section-btn me-2">
-            Mark as Seen
+            وضع علامة "تمت المشاهدة"
           </button>
-          <Link to="/all-student-results" className="btn nav-btn">Back to Results List</Link>
-          <Link to="/" className="btn nav-btn">Home</Link>
+          <Link to="/all-student-results" className="btn nav-btn">العودة إلى قائمة النتائج</Link>
+          <Link to="/" className="btn nav-btn">الرئيسية</Link>
         </div>
       </div>
     </div>
