@@ -41,8 +41,16 @@ function ViewExams() {
     const fetchExams = async () => {
       let token = localStorage.getItem('token');
       if (!token) {
-        setError('انتهت جلستك أو أنك لم تسجل الدخول. يرجى تسجيل الدخول مرة أخرى.');
+        setError('Your session has expired or you are not logged in. Please log in again.');
         setTimeout(() => navigate('/login'), 3000);
+        return;
+      }
+
+      const department = localStorage.getItem('department');
+      const division = localStorage.getItem('division');
+
+      if (!department || !division) {
+        setError('Please log in to view exams for your department.');
         return;
       }
 
@@ -58,7 +66,7 @@ function ViewExams() {
         if (response.status === 403 || response.status === 401) {
           token = await refreshToken();
           if (!token) {
-            setError('انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.');
+            setError('Your session has expired. Please log in again.');
             localStorage.removeItem('token');
             localStorage.removeItem('refreshToken');
             setTimeout(() => navigate('/login'), 3000);
@@ -77,15 +85,15 @@ function ViewExams() {
         const data = await response.json();
         if (response.ok) {
           const filteredExams = data.exams.filter(
-            exam => exam.subject === localStorage.getItem('department') && exam.division === localStorage.getItem('division')
+            exam => exam.subject === department && exam.division === division
           );
           setExams(filteredExams);
         } else {
-          setError(data.error || 'خطأ في جلب الامتحانات.');
+          setError(data.error || 'Error fetching exams.');
         }
       } catch (error) {
         console.error('Error fetching exams:', error);
-        setError('خطأ في جلب الامتحانات. يرجى المحاولة مرة أخرى.');
+        setError('Error fetching exams. Please try again.');
       }
     };
 
@@ -93,14 +101,14 @@ function ViewExams() {
   }, [navigate]);
 
   const handleDelete = async (examId) => {
-    const confirmDelete = window.confirm('هل أنت متأكد من حذف هذا الامتحان؟ لا يمكن التراجع عن هذا الإجراء.');
+    const confirmDelete = window.confirm('Are you sure you want to delete this exam? This action cannot be undone.');
     if (!confirmDelete) {
       return;
     }
 
     let token = localStorage.getItem('token');
     if (!token) {
-      setError('انتهت جلستك أو أنك لم تسجل الدخول. يرجى تسجيل الدخول مرة أخرى.');
+      setError('Your session has expired or you are not logged in. Please log in again.');
       setTimeout(() => navigate('/login'), 3000);
       return;
     }
@@ -116,7 +124,7 @@ function ViewExams() {
       if (response.status === 403 || response.status === 401) {
         token = await refreshToken();
         if (!token) {
-          setError('انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.');
+          setError('Your session has expired. Please log in again.');
           localStorage.removeItem('token');
           localStorage.removeItem('refreshToken');
           setTimeout(() => navigate('/login'), 3000);
@@ -134,13 +142,13 @@ function ViewExams() {
       const data = await response.json();
       if (response.ok) {
         setExams(exams.filter(exam => exam._id !== examId));
-        alert('تم حذف الامتحان بنجاح!');
+        alert('Exam deleted successfully!');
       } else {
-        setError(data.error || 'خطأ في حذف الامتحان.');
+        setError(data.error || 'Error deleting exam.');
       }
     } catch (error) {
       console.error('Error deleting exam:', error);
-      setError('خطأ في حذف الامتحان. يرجى المحاولة مرة أخرى.');
+      setError('Error deleting exam. Please try again.');
     }
   };
 
@@ -149,13 +157,13 @@ function ViewExams() {
       <div className="card">
         <img
           src="/images/logo.jpg"
-          alt="شعار مدارس الجيل الجديد العالمية"
+          alt="New Generation International Schools Logo"
           className="logo mb-3"
           style={{ maxWidth: '40px' }}
         />
         <h1 className="title mb-2">New Generation International Schools</h1>
-        <h2 className="subtitle mb-2">عرض الامتحانات</h2>
-        <p className="lead mb-3">قائمة الامتحانات المُعدة</p>
+        <h2 className="subtitle mb-2">View Exams</h2>
+        <p className="lead mb-3">List of Prepared Exams</p>
         {error && <p className="text-danger mb-3">{error}</p>}
         {error ? (
           <div className="nav-buttons">
@@ -163,24 +171,24 @@ function ViewExams() {
               className="btn nav-btn"
               onClick={() => navigate('/department-head-results')}
             >
-              العودة إلى لوحة التحكم
+              Back to Dashboard
             </button>
-            <Link to="/" className="btn nav-btn">الرئيسية</Link>
+            <Link to="/" className="btn nav-btn">Home</Link>
           </div>
         ) : exams.length === 0 ? (
-          <p>لا توجد امتحانات لقسمك في هذه الشعبة.</p>
+          <p>No exams found for your department in this division.</p>
         ) : (
           <div className="table-responsive">
             <table className="table table-bordered">
               <thead>
                 <tr>
-                  <th>المادة</th>
-                  <th>الشعبة</th>
-                  <th>المرحلة</th>
-                  <th>المستوى</th>
-                  <th>عدد الأسئلة</th>
-                  <th>الأسئلة</th>
-                  <th>الإجراءات</th>
+                  <th>Subject</th>
+                  <th>Division</th>
+                  <th>Stage</th>
+                  <th>Level</th>
+                  <th>Number of Questions</th>
+                  <th>Questions</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -194,18 +202,18 @@ function ViewExams() {
                     <td>
                       {exam.questions.map((question, index) => (
                         <div key={index} className="mb-2">
-                          <p><strong>السؤال {index + 1}:</strong> {question.question}</p>
+                          <p><strong>Question {index + 1}:</strong> {question.question}</p>
                           {question.image && question.image !== '' && (
                             <div className="mb-2">
                               <img
                                 src={question.image}
-                                alt={`الرسم التوضيحي للسؤال ${index + 1}`}
+                                alt={`Diagram for question ${index + 1}`}
                                 style={{ maxWidth: '300px', maxHeight: '300px', width: '100%', height: 'auto' }}
                               />
                             </div>
                           )}
-                          <p><strong>الخيارات:</strong> {question.options.join(', ')}</p>
-                          <p><strong>الإجابة الصحيحة:</strong> {question.correctAnswer}</p>
+                          <p><strong>Options:</strong> {question.options.join(', ')}</p>
+                          <p><strong>Correct Answer:</strong> {question.correctAnswer}</p>
                         </div>
                       ))}
                     </td>
@@ -214,13 +222,13 @@ function ViewExams() {
                         className="btn btn-primary btn-sm me-2"
                         onClick={() => navigate(`/edit-exam/${exam._id}`)}
                       >
-                        تعديل
+                        Edit
                       </button>
                       <button
                         className="btn btn-danger btn-sm"
                         onClick={() => handleDelete(exam._id)}
                       >
-                        حذف
+                        Delete
                       </button>
                     </td>
                   </tr>
@@ -235,9 +243,9 @@ function ViewExams() {
               className="btn nav-btn"
               onClick={() => navigate('/department-head-results')}
             >
-              العودة إلى لوحة التحكم
+              Back to Dashboard
             </button>
-            <Link to="/" className="btn nav-btn">الرئيسية</Link>
+            <Link to="/" className="btn nav-btn">Home</Link>
           </div>
         )}
       </div>

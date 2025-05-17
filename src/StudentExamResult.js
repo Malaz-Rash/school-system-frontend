@@ -41,13 +41,13 @@ function StudentExamResult() {
   useEffect(() => {
     const fetchApplication = async () => {
       if (!id || id === 'undefined') {
-        setError('معرف الطلب غير صالح. يرجى العودة واختيار طالب صالح.');
+        setError('Invalid application ID. Please go back and select a valid student.');
         return;
       }
 
       let token = localStorage.getItem('token');
       if (!token) {
-        setError('انتهت جلستك أو أنك لم تسجل الدخول. يرجى تسجيل الدخول مرة أخرى.');
+        setError('Your session has expired or you are not logged in. Please log in again.');
         setTimeout(() => navigate('/login'), 3000);
         return;
       }
@@ -62,17 +62,15 @@ function StudentExamResult() {
         });
 
         if (response.status === 403 || response.status === 401) {
-          // محاولة تحديث الـ token
           token = await refreshToken();
           if (!token) {
-            setError('انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.');
+            setError('Your session has expired. Please log in again.');
             localStorage.removeItem('token');
             localStorage.removeItem('refreshToken');
             setTimeout(() => navigate('/login'), 3000);
             return;
           }
 
-          // إعادة المحاولة مع الـ token الجديد
           response = await fetch(`https://school-system-backend-yr14.onrender.com/api/applications/${id}`, {
             method: 'GET',
             headers: {
@@ -86,11 +84,11 @@ function StudentExamResult() {
         if (response.ok) {
           setApplication(data.application);
         } else {
-          setError(data.error || 'خطأ في جلب تفاصيل الطلب.');
+          setError(data.error || 'Error fetching application details.');
         }
       } catch (error) {
         console.error('Error fetching application:', error);
-        setError('خطأ في جلب تفاصيل الطلب بسبب مشكلة في الشبكة. يرجى المحاولة مرة أخرى.');
+        setError('Error fetching application details due to network issue. Please try again.');
       }
     };
 
@@ -100,7 +98,7 @@ function StudentExamResult() {
   const markAsSeen = async () => {
     let token = localStorage.getItem('token');
     if (!token) {
-      setError('انتهت جلستك أو أنك لم تسجل الدخول. يرجى تسجيل الدخول مرة أخرى.');
+      setError('Your session has expired or you are not logged in. Please log in again.');
       setTimeout(() => navigate('/login'), 3000);
       return;
     }
@@ -115,17 +113,15 @@ function StudentExamResult() {
       });
 
       if (response.status === 403 || response.status === 401) {
-        // محاولة تحديث الـ token
         token = await refreshToken();
         if (!token) {
-          setError('انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.');
+          setError('Your session has expired. Please log in again.');
           localStorage.removeItem('token');
           localStorage.removeItem('refreshToken');
           setTimeout(() => navigate('/login'), 3000);
           return;
         }
 
-        // إعادة المحاولة مع الـ token الجديد
         response = await fetch(`https://school-system-backend-yr14.onrender.com/api/applications/${id}/mark-seen`, {
           method: 'PUT',
           headers: {
@@ -137,14 +133,14 @@ function StudentExamResult() {
 
       const data = await response.json();
       if (response.ok) {
-        alert('تم وضع علامة "تمت المشاهدة" على النتائج بنجاح.');
+        alert('Results marked as seen successfully.');
         navigate('/all-student-results');
       } else {
-        setError(data.error || 'خطأ في وضع علامة "تمت المشاهدة".');
+        setError(data.error || 'Error marking results as seen.');
       }
     } catch (error) {
       console.error('Error marking results as seen:', error);
-      setError('خطأ في وضع علامة "تمت المشاهدة" بسبب مشكلة في الشبكة. يرجى المحاولة مرة أخرى.');
+      setError('Error marking results as seen due to network issue. Please try again.');
     }
   };
 
@@ -152,11 +148,11 @@ function StudentExamResult() {
     return (
       <div className="home-container" style={{ backgroundImage: `url(${bgImage})` }}>
         <div className="card">
-          <h2>خطأ</h2>
+          <h2>Error</h2>
           <p className="text-danger">{error}</p>
           <div className="nav-buttons">
-            <Link to="/all-student-results" className="btn nav-btn">العودة إلى قائمة النتائج</Link>
-            <Link to="/" className="btn nav-btn">الرئيسية</Link>
+            <Link to="/all-student-results" className="btn nav-btn">Back to Results List</Link>
+            <Link to="/" className="btn nav-btn">Home</Link>
           </div>
         </div>
       </div>
@@ -167,7 +163,7 @@ function StudentExamResult() {
     return (
       <div className="home-container" style={{ backgroundImage: `url(${bgImage})` }}>
         <div className="card">
-          <h2>جارٍ التحميل...</h2>
+          <h2>Loading...</h2>
         </div>
       </div>
     );
@@ -181,20 +177,20 @@ function StudentExamResult() {
       <div className="card">
         <img
           src="/images/logo.jpg"
-          alt="شعار مدارس الجيل الجديد العالمية"
+          alt="New Generation International Schools Logo"
           className="logo mb-3"
           style={{ maxWidth: '40px' }}
         />
         <h1 className="title mb-2">New Generation International Schools</h1>
-        <h2 className="subtitle mb-2">نتائج امتحان الطالب</h2>
-        <p className="lead mb-3">مراجعة أداء الطالب</p>
+        <h2 className="subtitle mb-2">Student Exam Results</h2>
+        <p className="lead mb-3">Review Student Performance</p>
         {relevantExams.length === 0 ? (
-          <p>لا توجد امتحانات لقسمك.</p>
+          <p>No exams found for your department.</p>
         ) : (
           relevantExams.map((exam, examIndex) => (
             <div key={examIndex} className="mb-4">
-              <h3>امتحان {exam.subject}</h3>
-              <p>الدرجة: {exam.score}%</p>
+              <h3>{exam.subject} Exam</h3>
+              <p>Score: {exam.score}%</p>
               <p>{exam.comments}</p>
               {exam.results.map((result, resultIndex) => (
                 <div key={resultIndex} className="mb-3 p-3 border rounded">
@@ -202,7 +198,7 @@ function StudentExamResult() {
                     <span style={{ marginRight: '10px' }}>
                       {result.isCorrect ? '✅' : '❌'}
                     </span>
-                    <strong>السؤال {resultIndex + 1}:</strong> {result.question}
+                    <strong>Question {resultIndex + 1}:</strong> {result.question}
                   </p>
                   {result.image && result.image !== '' && (
                     <div className="mb-2">
@@ -213,8 +209,8 @@ function StudentExamResult() {
                       />
                     </div>
                   )}
-                  <p><strong>إجابة الطالب:</strong> {result.studentAnswer}</p>
-                  <p><strong>الإجابة الصحيحة:</strong> {result.correctAnswer}</p>
+                  <p><strong>Student's Answer:</strong> {result.studentAnswer}</p>
+                  <p><strong>Correct Answer:</strong> {result.correctAnswer}</p>
                 </div>
               ))}
             </div>
@@ -222,10 +218,10 @@ function StudentExamResult() {
         )}
         <div className="nav-buttons">
           <button onClick={markAsSeen} className="btn section-btn me-2">
-            وضع علامة "تمت المشاهدة"
+            Mark as Seen
           </button>
-          <Link to="/all-student-results" className="btn nav-btn">العودة إلى قائمة النتائج</Link>
-          <Link to="/" className="btn nav-btn">الرئيسية</Link>
+          <Link to="/all-student-results" className="btn nav-btn">Back to Results List</Link>
+          <Link to="/" className="btn nav-btn">Home</Link>
         </div>
       </div>
     </div>

@@ -24,7 +24,7 @@ function Login() {
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem('token', data.token);
-        localStorage.setItem('refreshToken', data.refreshToken); // تخزين الـ refreshToken
+        localStorage.setItem('refreshToken', data.refreshToken);
         localStorage.setItem('role', data.role);
         localStorage.setItem('department', data.department);
         localStorage.setItem('division', data.division);
@@ -48,7 +48,7 @@ function Login() {
       <div className="card">
         <img
           src="/images/logo.jpg"
-          alt="شعار مدارس الجيل الجديد العالمية"
+          alt="New Generation International Schools Logo"
           className="logo mb-3"
           style={{ maxWidth: '40px' }}
         />

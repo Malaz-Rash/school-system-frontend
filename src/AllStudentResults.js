@@ -41,7 +41,7 @@ function AllStudentResults() {
     const fetchApplications = async () => {
       let token = localStorage.getItem('token');
       if (!token) {
-        setError('انتهت جلستك أو أنك لم تسجل الدخول. يرجى تسجيل الدخول مرة أخرى.');
+        setError('Your session has expired or you are not logged in. Please log in again.');
         setTimeout(() => navigate('/login'), 3000);
         return;
       }
@@ -58,7 +58,7 @@ function AllStudentResults() {
         if (response.status === 403 || response.status === 401) {
           token = await refreshToken();
           if (!token) {
-            setError('انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.');
+            setError('Your session has expired. Please log in again.');
             localStorage.removeItem('token');
             localStorage.removeItem('refreshToken');
             setTimeout(() => navigate('/login'), 3000);
@@ -78,14 +78,14 @@ function AllStudentResults() {
         if (response.ok) {
           setApplications(data.applications);
           if (data.applications.length === 0) {
-            setError('لا توجد طلبات طلاب لعرضها. يرجى تسجيل طالب جديد أولاً.');
+            setError('No student applications found. Please register a new student first.');
           }
         } else {
-          setError(data.error || 'خطأ في جلب الطلبات.');
+          setError(data.error || 'Error fetching applications.');
         }
       } catch (error) {
         console.error('Error fetching applications:', error);
-        setError('خطأ في جلب الطلبات. يرجى المحاولة مرة أخرى.');
+        setError('Error fetching applications. Please try again.');
       }
     };
 
@@ -97,31 +97,31 @@ function AllStudentResults() {
       <div className="card">
         <img
           src="/images/logo.jpg"
-          alt="شعار مدارس الجيل الجديد العالمية"
+          alt="New Generation International Schools Logo"
           className="logo mb-3"
           style={{ maxWidth: '40px' }}
         />
         <h1 className="title mb-2">New Generation International Schools</h1>
-        <h2 className="subtitle mb-2">جميع نتائج الطلاب</h2>
-        <p className="lead mb-3">عرض نتائج امتحانات جميع الطلاب</p>
+        <h2 className="subtitle mb-2">All Student Results</h2>
+        <p className="lead mb-3">View Exam Results for All Students</p>
         {error && <p className="text-danger mb-3">{error}</p>}
         {applications.length === 0 && !error ? (
-          <p>لا توجد طلبات لعرضها. يرجى تسجيل طالب جديد أولاً.</p>
+          <p>No applications found. Please register a new student first.</p>
         ) : (
           <table className="table table-striped">
             <thead>
               <tr>
-                <th>اسم الطالب</th>
-                <th>الشعبة</th>
-                <th>المرحلة</th>
-                <th>المستوى</th>
-                <th>الإجراءات</th>
+                <th>Student Name</th>
+                <th>Division</th>
+                <th>Stage</th>
+                <th>Level</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {applications.map((app, index) => (
                 <tr key={index}>
-                  <td>{app.studentId?.name || 'غير متوفر'}</td>
+                  <td>{app.studentId?.name || 'N/A'}</td>
                   <td>{app.division}</td>
                   <td>{app.stage}</td>
                   <td>{app.level}</td>
@@ -131,10 +131,10 @@ function AllStudentResults() {
                         to={`/student-exam-result/${app._id}`}
                         className="btn btn-primary btn-sm"
                       >
-                        عرض النتائج
+                        View Results
                       </Link>
                     ) : (
-                      <span className="text-muted">لا توجد نتائج متاحة</span>
+                      <span className="text-muted">No results available</span>
                     )}
                   </td>
                 </tr>
@@ -147,9 +147,9 @@ function AllStudentResults() {
             onClick={() => navigate('/department-head-results')}
             className="btn nav-btn"
           >
-            العودة إلى لوحة التحكم
+            Back to Dashboard
           </button>
-          <Link to="/" className="btn nav-btn">الرئيسية</Link>
+          <Link to="/" className="btn nav-btn">Home</Link>
         </div>
       </div>
     </div>

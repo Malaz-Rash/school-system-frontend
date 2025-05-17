@@ -42,7 +42,7 @@ function DepartmentHeadResults() {
     const fetchNewApplications = async () => {
       let token = localStorage.getItem('token');
       if (!token) {
-        setError('انتهت جلستك أو أنك لم تسجل الدخول. يرجى تسجيل الدخول مرة أخرى.');
+        setError('Your session has expired or you are not logged in. Please log in again.');
         setTimeout(() => navigate('/login'), 3000);
         return;
       }
@@ -59,7 +59,7 @@ function DepartmentHeadResults() {
         if (response.status === 403 || response.status === 401) {
           token = await refreshToken();
           if (!token) {
-            setError('انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.');
+            setError('Your session has expired. Please log in again.');
             localStorage.removeItem('token');
             localStorage.removeItem('refreshToken');
             setTimeout(() => navigate('/login'), 3000);
@@ -97,11 +97,11 @@ function DepartmentHeadResults() {
           });
           setStageCounts(orderedCounts);
         } else {
-          setError(data.error || 'خطأ في جلب الطلبات.');
+          setError(data.error || 'Error fetching applications.');
         }
       } catch (error) {
         console.error('Error fetching applications:', error);
-        setError('خطأ في جلب الطلبات. يرجى المحاولة مرة أخرى.');
+        setError('Error fetching applications. Please try again.');
       }
     };
 
@@ -113,18 +113,18 @@ function DepartmentHeadResults() {
       <div className="card">
         <img
           src="/images/logo.jpg"
-          alt="شعار مدارس الجيل الجديد العالمية"
+          alt="New Generation International Schools Logo"
           className="logo mb-3"
           style={{ maxWidth: '40px' }}
         />
         <h1 className="title mb-2">New Generation International Schools</h1>
-        <h2 className="subtitle mb-2">لوحة تحكم رئيس القسم</h2>
-        <p className="lead mb-3">إدارة الامتحانات وعرض النتائج</p>
+        <h2 className="subtitle mb-2">Department Head Dashboard</h2>
+        <p className="lead mb-3">Manage Exams and View Results</p>
         {error && <p className="text-danger mb-3">{error}</p>}
 
         {newApplications.length > 0 && (
           <div className="alert alert-info mb-3" role="alert">
-            <strong>تنبيه بوجود طلبات جديدة:</strong> لديك {newApplications.length} طلب/طلبات جديدة لمراجعتها.{' '}
+            <strong>New Applications Alert:</strong> You have {newApplications.length} new application(s) to review.{' '}
             {Object.entries(stageCounts).map(([stage, count], index) => (
               <span key={stage}>
                 {stage}: {count}
@@ -139,23 +139,23 @@ function DepartmentHeadResults() {
             className="btn section-btn me-2"
             onClick={() => navigate('/create-exam')}
           >
-            إنشاء امتحان جديد
+            Create New Exam
           </button>
           <button
             className="btn section-btn me-2"
             onClick={() => navigate('/view-exams')}
           >
-            عرض الامتحانات المُعدة
+            View Prepared Exams
           </button>
           <button
             className="btn section-btn"
             onClick={() => navigate('/all-student-results')}
           >
-            عرض جميع النتائج
+            View All Results
           </button>
         </div>
         <div className="nav-buttons">
-          <Link to="/" className="btn nav-btn">الرئيسية</Link>
+          <Link to="/" className="btn nav-btn">Home</Link>
         </div>
       </div>
     </div>

@@ -49,8 +49,16 @@ function EditExam() {
     const fetchExam = async () => {
       let token = localStorage.getItem('token');
       if (!token) {
-        setError('انتهت جلستك أو أنك لم تسجل الدخول. يرجى تسجيل الدخول مرة أخرى.');
+        setError('Your session has expired or you are not logged in. Please log in again.');
         setTimeout(() => navigate('/login'), 3000);
+        return;
+      }
+
+      const department = localStorage.getItem('department');
+      const division = localStorage.getItem('division');
+
+      if (!department || !division) {
+        setError('Please log in to edit exams for your department.');
         return;
       }
 
@@ -66,7 +74,7 @@ function EditExam() {
         if (response.status === 403 || response.status === 401) {
           token = await refreshToken();
           if (!token) {
-            setError('انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.');
+            setError('Your session has expired. Please log in again.');
             localStorage.removeItem('token');
             localStorage.removeItem('refreshToken');
             setTimeout(() => navigate('/login'), 3000);
@@ -86,6 +94,10 @@ function EditExam() {
         if (response.ok) {
           const exam = data.exams.find(exam => exam._id === id);
           if (exam) {
+            if (exam.subject !== department || exam.division !== division) {
+              setError('You can only edit exams for your department and division.');
+              return;
+            }
             setExamData({
               subject: exam.subject,
               questions: exam.questions,
@@ -95,14 +107,14 @@ function EditExam() {
             });
             setImageFiles(new Array(exam.questions.length).fill(null));
           } else {
-            setError('الامتحان غير موجود.');
+            setError('Exam not found.');
           }
         } else {
-          setError(data.error || 'خطأ في جلب الامتحان.');
+          setError(data.error || 'Error fetching exam.');
         }
       } catch (error) {
         console.error('Error fetching exam:', error);
-        setError('خطأ في جلب الامتحان. يرجى المحاولة مرة أخرى.');
+        setError('Error fetching exam. Please try again.');
       }
     };
 
@@ -145,7 +157,7 @@ function EditExam() {
   };
 
   const deleteQuestion = (index) => {
-    const confirmDelete = window.confirm('هل أنت متأكد من حذف هذا السؤال؟ لا يمكن التراجع عن هذا الإجراء.');
+    const confirmDelete = window.confirm('Are you sure you want to delete this question? This action cannot be undone.');
     if (!confirmDelete) return;
 
     const newQuestions = examData.questions.filter((_, i) => i !== index);
@@ -156,10 +168,19 @@ function EditExam() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     let token = localStorage.getItem('token');
     if (!token) {
-      setError('انتهت جلستك أو أنك لم تسجل الدخول. يرجى تسجيل الدخول مرة أخرى.');
+      setError('Your session has expired or you are not logged in. Please log in again.');
       setTimeout(() => navigate('/login'), 3000);
+      return;
+    }
+
+    const department = localStorage.getItem('department');
+    const division = localStorage.getItem('division');
+
+    if (!department || !division) {
+      setError('Please log in to edit exams for your department.');
       return;
     }
 
@@ -192,7 +213,7 @@ function EditExam() {
       if (response.status === 403 || response.status === 401) {
         token = await refreshToken();
         if (!token) {
-          setError('انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.');
+          setError('Your session has expired. Please log in again.');
           localStorage.removeItem('token');
           localStorage.removeItem('refreshToken');
           setTimeout(() => navigate('/login'), 3000);
@@ -210,14 +231,14 @@ function EditExam() {
 
       const data = await response.json();
       if (response.ok) {
-        alert('تم تحديث الامتحان بنجاح!');
+        alert('Exam updated successfully!');
         navigate('/view-exams');
       } else {
-        setError(data.error || 'خطأ في تحديث الامتحان. يرجى المحاولة مرة أخرى.');
+        setError(data.error || 'Error updating exam. Please try again.');
       }
     } catch (error) {
       console.error('Error updating exam:', error);
-      setError('خطأ في تحديث الامتحان. يرجى المحاولة مرة أخرى.');
+      setError('Error updating exam. Please try again.');
     }
   };
 
@@ -226,23 +247,23 @@ function EditExam() {
       <div className="card">
         <img
           src="/images/logo.jpg"
-          alt="شعار مدارس الجيل الجديد العالمية"
+          alt="New Generation International Schools Logo"
           className="logo mb-3"
           style={{ maxWidth: '40px' }}
         />
         <h1 className="title mb-2">New Generation International Schools</h1>
-        <h2 className="subtitle mb-2">تعديل الامتحان</h2>
-        <p className="lead mb-3">تعديل تفاصيل الامتحان</p>
+        <h2 className="subtitle mb-2">Edit Exam</h2>
+        <p className="lead mb-3">Modify Exam Details</p>
         {error && <p className="text-danger mb-3">{error}</p>}
         {error ? (
           <div className="nav-buttons">
-            <Link to="/view-exams" className="btn nav-btn">العودة إلى قائمة الامتحانات</Link>
-            <Link to="/" className="btn nav-btn">الرئيسية</Link>
+            <Link to="/view-exams" className="btn nav-btn">Back to Exams List</Link>
+            <Link to="/" className="btn nav-btn">Home</Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
-              <label htmlFor="division" className="form-label">الشعبة</label>
+              <label htmlFor="division" className="form-label">Division</label>
               <input
                 type="text"
                 className="form-control"
@@ -252,7 +273,7 @@ function EditExam() {
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="subject" className="form-label">المادة</label>
+              <label htmlFor="subject" className="form-label">Subject</label>
               <input
                 type="text"
                 className="form-control"
@@ -262,7 +283,7 @@ function EditExam() {
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="stage" className="form-label">المرحلة</label>
+              <label htmlFor="stage" className="form-label">Stage</label>
               <input
                 type="text"
                 className="form-control"
@@ -272,7 +293,7 @@ function EditExam() {
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="level" className="form-label">المستوى</label>
+              <label htmlFor="level" className="form-label">Level</label>
               <input
                 type="text"
                 className="form-control"
@@ -283,34 +304,34 @@ function EditExam() {
             </div>
             {examData.questions.map((q, index) => (
               <div key={index} className="mb-3 p-3 border rounded position-relative">
-                <label className="form-label">{`السؤال ${index + 1}`}</label>
+                <label className="form-label">{`Question ${index + 1}`}</label>
                 <button
                   type="button"
                   className="btn btn-danger btn-sm position-absolute"
                   style={{ top: '10px', right: '10px' }}
                   onClick={() => deleteQuestion(index)}
                 >
-                  حذف السؤال
+                  Delete Question
                 </button>
                 <input
                   type="text"
                   className="form-control mb-2"
-                  placeholder="أدخل السؤال"
+                  placeholder="Enter question"
                   value={q.question}
                   onChange={(e) => handleQuestionChange(index, 'question', e.target.value)}
                   required
                 />
                 {q.image && q.image !== '' && (
                   <div className="mb-2">
-                    <p>الصورة الحالية:</p>
+                    <p>Current Image:</p>
                     <img
                       src={q.image}
-                      alt={`الرسم التوضيحي للسؤال ${index + 1}`}
+                      alt={`Diagram for question ${index + 1}`}
                       style={{ maxWidth: '300px', maxHeight: '300px', width: '100%', height: 'auto' }}
                     />
                   </div>
                 )}
-                <label className="form-label">رفع صورة جديدة (اختياري)</label>
+                <label className="form-label">Upload New Image (Optional)</label>
                 <input
                   type="file"
                   className="form-control mb-2"
@@ -319,10 +340,10 @@ function EditExam() {
                 />
                 {imageFiles[index] && (
                   <div className="mb-2">
-                    <p>معاينة الصورة الجديدة:</p>
+                    <p>New Image Preview:</p>
                     <img
                       src={URL.createObjectURL(imageFiles[index])}
-                      alt={`الرسم التوضيحي الجديد للسؤال ${index + 1}`}
+                      alt={`New diagram for question ${index + 1}`}
                       style={{ maxWidth: '300px', maxHeight: '300px', width: '100%', height: 'auto' }}
                     />
                   </div>
@@ -332,7 +353,7 @@ function EditExam() {
                     key={optIndex}
                     type="text"
                     className="form-control mb-1"
-                    placeholder={`الخيار ${optIndex + 1}`}
+                    placeholder={`Option ${optIndex + 1}`}
                     value={option}
                     onChange={(e) => handleQuestionChange(index, `option-${optIndex}`, e.target.value)}
                     required
@@ -341,7 +362,7 @@ function EditExam() {
                 <input
                   type="text"
                   className="form-control mb-2"
-                  placeholder="الإجابة الصحيحة"
+                  placeholder="Correct Answer"
                   value={q.correctAnswer}
                   onChange={(e) => handleQuestionChange(index, 'correctAnswer', e.target.value)}
                   required
@@ -350,13 +371,13 @@ function EditExam() {
             ))}
             <div className="stage-buttons mb-3">
               <button type="button" className="btn section-btn me-2" onClick={addQuestion}>
-                إضافة سؤال جديد
+                Add New Question
               </button>
-              <button type="submit" className="btn section-btn">تحديث الامتحان</button>
+              <button type="submit" className="btn section-btn">Update Exam</button>
             </div>
             <div className="nav-buttons">
-              <Link to="/view-exams" className="btn nav-btn">العودة إلى قائمة الامتحانات</Link>
-              <Link to="/" className="btn nav-btn">الرئيسية</Link>
+              <Link to="/view-exams" className="btn nav-btn">Back to Exams List</Link>
+              <Link to="/" className="btn nav-btn">Home</Link>
             </div>
           </form>
         )}

@@ -153,7 +153,7 @@ function CreateExam() {
 
     let token = localStorage.getItem('token');
     if (!token) {
-      setError('انتهت جلستك أو أنك لم تسجل الدخول. يرجى تسجيل الدخول مرة أخرى.');
+      setError('Your session has expired or you are not logged in. Please log in again.');
       setTimeout(() => navigate('/login'), 3000);
       return;
     }
@@ -163,13 +163,13 @@ function CreateExam() {
       console.log('Division:', division);
       console.log('Selected Stage:', selectedStage);
       console.log('Selected Level:', selectedLevel);
-      setError('يرجى تحديد الشعبة، المرحلة، والمستوى.');
+      setError('Please select Division, Stage, and Level.');
       return;
     }
 
     if (!questions || questions.length === 0) {
       console.log('Validation failed: No questions provided');
-      setError('يرجى إضافة سؤال واحد على الأقل.');
+      setError('Please add at least one question.');
       return;
     }
 
@@ -207,7 +207,7 @@ function CreateExam() {
       if (response.status === 403 || response.status === 401) {
         token = await refreshToken();
         if (!token) {
-          setError('انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.');
+          setError('Your session has expired. Please log in again.');
           localStorage.removeItem('token');
           localStorage.removeItem('refreshToken');
           setTimeout(() => navigate('/login'), 3000);
@@ -230,15 +230,15 @@ function CreateExam() {
 
       if (response.ok) {
         console.log('Exam created successfully, navigating to department-head-results');
-        alert('تم إنشاء الامتحان بنجاح!');
+        alert('Exam created successfully!');
         navigate('/department-head-results');
       } else {
         console.log('Server returned an error:', data.error);
-        setError(data.error || 'خطأ في إنشاء الامتحان. يرجى المحاولة مرة أخرى.');
+        setError(data.error || 'Error creating exam. Please try again.');
       }
     } catch (error) {
       console.error('Error during fetch in handleSubmit:', error.message, error.stack);
-      setError('خطأ في إنشاء الامتحان: ' + error.message);
+      setError('Error creating exam: ' + error.message);
     }
   };
 
@@ -251,13 +251,13 @@ function CreateExam() {
         </p>
         <img
           src="/images/logo.jpg"
-          alt="شعار مدارس الجيل الجديد العالمية"
+          alt="New Generation International Schools Logo"
           className="logo mb-3"
           style={{ maxWidth: '40px' }}
         />
         <h1 className="title mb-2">New Generation International Schools</h1>
-        <h2 className="subtitle mb-2">إنشاء امتحان</h2>
-        <p className="lead mb-3">إضافة أسئلة امتحان جديد</p>
+        <h2 className="subtitle mb-2">Create Exam</h2>
+        <p className="lead mb-3">Add New Exam Questions</p>
         {error && <p className="text-danger mb-3">{error}</p>}
         {error ? (
           <div className="nav-buttons">
@@ -265,14 +265,14 @@ function CreateExam() {
               onClick={() => navigate('/department-head-results')}
               className="btn nav-btn"
             >
-              العودة
+              Back
             </button>
-            <Link to="/" className="btn nav-btn">الرئيسية</Link>
+            <Link to="/" className="btn nav-btn">Home</Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
-              <label htmlFor="division" className="form-label">الشعبة</label>
+              <label htmlFor="division" className="form-label">Division</label>
               <input
                 type="text"
                 className="form-control"
@@ -282,7 +282,7 @@ function CreateExam() {
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="stage" className="form-label">المرحلة</label>
+              <label htmlFor="stage" className="form-label">Stage</label>
               <select
                 id="stage"
                 className="form-control"
@@ -294,7 +294,7 @@ function CreateExam() {
                 }}
                 required
               >
-                <option value="">-- اختر المرحلة --</option>
+                <option value="">-- Select Stage --</option>
                 {stages.map((stageOption, index) => (
                   <option key={index} value={stageOption}>{stageOption}</option>
                 ))}
@@ -302,7 +302,7 @@ function CreateExam() {
             </div>
             {selectedStage === 'Upper Secondary' && division === 'British' && (
               <div className="mb-3">
-                <label htmlFor="subStage" className="form-label">المرحلة الفرعية</label>
+                <label htmlFor="subStage" className="form-label">Sub-Stage</label>
                 <select
                   id="subStage"
                   className="form-control"
@@ -313,7 +313,7 @@ function CreateExam() {
                   }}
                   required
                 >
-                  <option value="">-- اختر المرحلة الفرعية --</option>
+                  <option value="">-- Select Sub-Stage --</option>
                   {subStages.map((subStageOption, index) => (
                     <option key={index} value={subStageOption}>{subStageOption}</option>
                   ))}
@@ -321,7 +321,7 @@ function CreateExam() {
               </div>
             )}
             <div className="mb-3">
-              <label htmlFor="level" className="form-label">المستوى</label>
+              <label htmlFor="level" className="form-label">Level</label>
               <select
                 id="level"
                 className="form-control"
@@ -329,14 +329,14 @@ function CreateExam() {
                 onChange={(e) => setSelectedLevel(e.target.value)}
                 required
               >
-                <option value="">-- اختر المستوى --</option>
+                <option value="">-- Select Level --</option>
                 {levels.map((levelOption, index) => (
                   <option key={index} value={levelOption}>{levelOption}</option>
                 ))}
               </select>
             </div>
             <div className="mb-3">
-              <label htmlFor="subject" className="form-label">المادة</label>
+              <label htmlFor="subject" className="form-label">Subject</label>
               <input
                 type="text"
                 className="form-control"
@@ -347,16 +347,16 @@ function CreateExam() {
             </div>
             {questions.map((q, index) => (
               <div key={index} className="mb-3">
-                <label className="form-label">{`السؤال ${index + 1}`}</label>
+                <label className="form-label">{`Question ${index + 1}`}</label>
                 <input
                   type="text"
                   className="form-control mb-2"
-                  placeholder="أدخل السؤال"
+                  placeholder="Enter question"
                   value={q.question}
                   onChange={(e) => handleQuestionChange(index, 'question', e.target.value)}
                   required
                 />
-                <label className="form-label">رفع صورة (اختياري)</label>
+                <label className="form-label">Upload Image (Optional)</label>
                 <input
                   type="file"
                   className="form-control mb-2"
@@ -367,7 +367,7 @@ function CreateExam() {
                   <div className="mb-2">
                     <img
                       src={URL.createObjectURL(imageFiles[index])}
-                      alt={`معاينة السؤال ${index + 1}`}
+                      alt={`Preview for question ${index + 1}`}
                       style={{ maxWidth: '200px', maxHeight: '200px' }}
                     />
                   </div>
@@ -377,7 +377,7 @@ function CreateExam() {
                     key={optIndex}
                     type="text"
                     className="form-control mb-1"
-                    placeholder={`الخيار ${optIndex + 1}`}
+                    placeholder={`Option ${optIndex + 1}`}
                     value={option}
                     onChange={(e) => handleQuestionChange(index, `option-${optIndex}`, e.target.value)}
                     required
@@ -386,7 +386,7 @@ function CreateExam() {
                 <input
                   type="text"
                   className="form-control mb-2"
-                  placeholder="الإجابة الصحيحة"
+                  placeholder="Correct Answer"
                   value={q.correctAnswer}
                   onChange={(e) => handleQuestionChange(index, 'correctAnswer', e.target.value)}
                   required
@@ -395,18 +395,18 @@ function CreateExam() {
             ))}
             <div className="stage-buttons">
               <button type="button" className="btn section-btn" onClick={addQuestion}>
-                إضافة سؤال
+                Add Question
               </button>
-              <button type="submit" className="btn section-btn">إنشاء الامتحان</button>
+              <button type="submit" className="btn section-btn">Create Exam</button>
             </div>
             <div className="nav-buttons">
               <button
                 onClick={() => navigate('/department-head-results')}
                 className="btn nav-btn"
               >
-                العودة
+                Back
               </button>
-              <Link to="/" className="btn nav-btn">الرئيسية</Link>
+              <Link to="/" className="btn nav-btn">Home</Link>
             </div>
           </form>
         )}
