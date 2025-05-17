@@ -13,10 +13,12 @@ function StudentExamResult() {
   const refreshToken = async () => {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {
+      console.log('No refresh token found in localStorage');
       return null;
     }
 
     try {
+      console.log('Attempting to refresh token...');
       const response = await fetch('https://school-system-backend-yr14.onrender.com/api/refresh-token', {
         method: 'POST',
         headers: {
@@ -25,11 +27,14 @@ function StudentExamResult() {
         body: JSON.stringify({ refreshToken }),
       });
 
+      console.log('Refresh token response status:', response.status);
       const data = await response.json();
       if (response.ok) {
+        console.log('Token refreshed successfully:', data.token);
         localStorage.setItem('token', data.token);
         return data.token;
       } else {
+        console.error('Failed to refresh token:', data.error);
         throw new Error(data.error || 'Failed to refresh token');
       }
     } catch (error) {
@@ -41,18 +46,21 @@ function StudentExamResult() {
   useEffect(() => {
     const fetchApplication = async () => {
       if (!id || id === 'undefined') {
+        console.log('Invalid application ID:', id);
         setError('Invalid application ID. Please go back and select a valid student.');
         return;
       }
 
       let token = localStorage.getItem('token');
       if (!token) {
+        console.log('No token found in localStorage');
         setError('Your session has expired or you are not logged in. Please log in again.');
         setTimeout(() => navigate('/login'), 3000);
         return;
       }
 
       try {
+        console.log(`Fetching application with ID ${id} using token: ${token.substring(0, 10)}...`);
         let response = await fetch(`https://school-system-backend-yr14.onrender.com/api/applications/${id}`, {
           method: 'GET',
           headers: {
@@ -61,9 +69,12 @@ function StudentExamResult() {
           },
         });
 
+        console.log('Fetch application response status:', response.status);
         if (response.status === 403 || response.status === 401) {
+          console.log('Token expired or unauthorized, attempting to refresh token...');
           token = await refreshToken();
           if (!token) {
+            console.log('Token refresh failed, redirecting to login');
             setError('Your session has expired. Please log in again.');
             localStorage.removeItem('token');
             localStorage.removeItem('refreshToken');
@@ -71,6 +82,7 @@ function StudentExamResult() {
             return;
           }
 
+          console.log('Retrying fetch with new token...');
           response = await fetch(`https://school-system-backend-yr14.onrender.com/api/applications/${id}`, {
             method: 'GET',
             headers: {
@@ -78,12 +90,15 @@ function StudentExamResult() {
               'Content-Type': 'application/json',
             },
           });
+          console.log('Retry fetch response status:', response.status);
         }
 
         const data = await response.json();
         if (response.ok) {
+          console.log('Application data retrieved successfully:', data.application);
           setApplication(data.application);
         } else {
+          console.error('Error fetching application:', data.error);
           setError(data.error || 'Error fetching application details.');
         }
       } catch (error) {
@@ -98,12 +113,14 @@ function StudentExamResult() {
   const markAsSeen = async () => {
     let token = localStorage.getItem('token');
     if (!token) {
+      console.log('No token found for markAsSeen');
       setError('Your session has expired or you are not logged in. Please log in again.');
       setTimeout(() => navigate('/login'), 3000);
       return;
     }
 
     try {
+      console.log(`Marking application ${id} as seen...`);
       let response = await fetch(`https://school-system-backend-yr14.onrender.com/api/applications/${id}/mark-seen`, {
         method: 'PUT',
         headers: {
@@ -112,9 +129,12 @@ function StudentExamResult() {
         },
       });
 
+      console.log('Mark as seen response status:', response.status);
       if (response.status === 403 || response.status === 401) {
+        console.log('Token expired for markAsSeen, attempting to refresh...');
         token = await refreshToken();
         if (!token) {
+          console.log('Token refresh failed for markAsSeen, redirecting to login');
           setError('Your session has expired. Please log in again.');
           localStorage.removeItem('token');
           localStorage.removeItem('refreshToken');
@@ -122,6 +142,7 @@ function StudentExamResult() {
           return;
         }
 
+        console.log('Retrying markAsSeen with new token...');
         response = await fetch(`https://school-system-backend-yr14.onrender.com/api/applications/${id}/mark-seen`, {
           method: 'PUT',
           headers: {
@@ -129,6 +150,7 @@ function StudentExamResult() {
             'Content-Type': 'application/json',
           },
         });
+        console.log('Retry markAsSeen response status:', response.status);
       }
 
       const data = await response.json();
@@ -136,6 +158,7 @@ function StudentExamResult() {
         alert('Results marked as seen successfully.');
         navigate('/all-student-results');
       } else {
+        console.error('Error marking as seen:', data.error);
         setError(data.error || 'Error marking results as seen.');
       }
     } catch (error) {
