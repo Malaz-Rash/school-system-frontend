@@ -10,6 +10,8 @@ function StudentExamResult() {
   const [application, setApplication] = useState(null);
   const [error, setError] = useState('');
 
+  console.log('Extracted ID from useParams:', id);
+
   const refreshToken = async () => {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {

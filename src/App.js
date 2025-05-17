@@ -33,7 +33,7 @@ function App() {
           <Route path="/department-head-results" element={<DepartmentHeadResults />} />
           <Route path="/view-exams" element={<ViewExams />} />
           <Route path="/edit-exam/:id" element={<EditExam />} />
-          <Route path="/student-exam-result/:applicationId" element={<StudentExamResult />} />
+          <Route path="/student-exam-result/:id" element={<StudentExamResult />} />
           <Route path="/all-student-results" element={<AllStudentResults />} />
         </Routes>
       </div>
