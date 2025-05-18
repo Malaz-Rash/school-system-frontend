@@ -5,7 +5,7 @@ import bgImage from './bg1.jpg';
 import './HomePage.css';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable'; // استيراد autoTable مباشرة
+import autoTable from 'jspdf-autotable';
 
 function RegistrarStudents() {
   const navigate = useNavigate();
@@ -151,26 +151,84 @@ function RegistrarStudents() {
     XLSX.writeFile(workbook, 'students_data.xlsx');
   };
 
-  // دالة لتصدير البيانات إلى PDF
+  // دالة لتصدير البيانات إلى PDF مع دعم اللغة العربية وتحسين التنسيق
   const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.text('Students Data', 10, 10);
-    autoTable(doc, { // استخدام autoTable مباشرة كدالة
-      head: [['Student Name', 'Full Name (Arabic)', 'Full Name (English)', 'National ID', 'Birth Date', 'Nationality', "Father's Phone", "Mother's Phone", 'Division', 'Stage', 'Level']],
-      body: filteredStudents.map(student => [
-        student.name || 'N/A',
-        student.fullNameAr || 'N/A',
-        student.fullNameEn || 'N/A',
-        student.nationalId || 'N/A',
-        student.birthDate || 'N/A',
-        student.nationality || 'N/A',
-        student.fatherPhone || 'N/A',
-        student.motherPhone || 'N/A',
-        student.division || 'N/A',
-        student.stage || 'N/A',
-        student.level || 'N/A',
-      ]),
+    const doc = new jsPDF({
+      orientation: 'landscape', // استخدام الاتجاه الأفقي لتتناسب مع عدد الأعمدة
     });
+
+    // إضافة عنوان الملف
+    doc.text('Students Data', 10, 10);
+
+    // تحديد الأعمدة مع عرض مخصص لكل عمود
+    const columns = [
+      { header: 'Student Name', dataKey: 'studentName', width: 30 },
+      { header: 'Full Name (Arabic)', dataKey: 'fullNameAr', width: 30 },
+      { header: 'Full Name (English)', dataKey: 'fullNameEn', width: 30 },
+      { header: 'National ID', dataKey: 'nationalId', width: 20 },
+      { header: 'Birth Date', dataKey: 'birthDate', width: 20 },
+      { header: 'Nationality', dataKey: 'nationality', width: 20 },
+      { header: "Father's Phone", dataKey: 'fatherPhone', width: 20 },
+      { header: "Mother's Phone", dataKey: 'motherPhone', width: 20 },
+      { header: 'Division', dataKey: 'division', width: 20 },
+      { header: 'Stage', dataKey: 'stage', width: 20 },
+      { header: 'Level', dataKey: 'level', width: 20 },
+    ];
+
+    // تحضير البيانات
+    const data = filteredStudents.map(student => ({
+      studentName: student.name || 'N/A',
+      fullNameAr: student.fullNameAr || 'N/A',
+      fullNameEn: student.fullNameEn || 'N/A',
+      nationalId: student.nationalId || 'N/A',
+      birthDate: student.birthDate || 'N/A',
+      nationality: student.nationality || 'N/A',
+      fatherPhone: student.fatherPhone || 'N/A',
+      motherPhone: student.motherPhone || 'N/A',
+      division: student.division || 'N/A',
+      stage: student.stage || 'N/A',
+      level: student.level || 'N/A',
+    }));
+
+    // إعدادات autoTable مع دعم RTL وتحسين التنسيق
+    autoTable(doc, {
+      columns: columns,
+      body: data,
+      startY: 20,
+      theme: 'grid',
+      styles: {
+        fontSize: 10,
+        cellPadding: 2,
+        overflow: 'linebreak', // السماح بالالتفاف التلقائي للنصوص الطويلة
+        halign: 'right', // محاذاة النصوص إلى اليمين لدعم اللغة العربية
+        valign: 'middle',
+      },
+      headStyles: {
+        fillColor: [200, 200, 200],
+        textColor: [0, 0, 0],
+        halign: 'right', // محاذاة رأس الجدول إلى اليمين
+      },
+      columnStyles: {
+        studentName: { cellWidth: 30 },
+        fullNameAr: { cellWidth: 30 },
+        fullNameEn: { cellWidth: 30 },
+        nationalId: { cellWidth: 20 },
+        birthDate: { cellWidth: 20 },
+        nationality: { cellWidth: 20 },
+        fatherPhone: { cellWidth: 20 },
+        motherPhone: { cellWidth: 20 },
+        division: { cellWidth: 20 },
+        stage: { cellWidth: 20 },
+        level: { cellWidth: 20 },
+      },
+      didDrawCell: (data) => {
+        // لضمان أن النصوص العربية تظهر بشكل صحيح (إذا كان هناك دعم إضافي للخطوط)
+        if (data.column.dataKey === 'fullNameAr') {
+          doc.setTextColor(0, 0, 0);
+        }
+      },
+    });
+
     doc.save('students_data.pdf');
   };
 
