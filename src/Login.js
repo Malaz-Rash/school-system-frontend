@@ -31,6 +31,8 @@ function Login() {
         alert('Login successful!');
         if (data.role === 'DepartmentHead') {
           navigate('/department-head-results');
+        } else if (data.role === 'Registrar') {
+          navigate('/registrar-students');
         } else {
           navigate('/');
         }

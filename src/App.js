@@ -14,6 +14,7 @@ import ViewExams from './ViewExams';
 import EditExam from './EditExam';
 import StudentExamResult from './StudentExamResult';
 import AllStudentResults from './AllStudentResults';
+import RegistrarStudents from './RegistrarStudents';
 import './App.css';
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
           <Route path="/edit-exam/:id" element={<EditExam />} />
           <Route path="/student-exam-result/:id" element={<StudentExamResult />} />
           <Route path="/all-student-results" element={<AllStudentResults />} />
+          <Route path="/registrar-students" element={<RegistrarStudents />} />
         </Routes>
       </div>
     </Router>
