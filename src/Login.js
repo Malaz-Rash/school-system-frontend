@@ -23,6 +23,8 @@ function Login() {
 
       const data = await response.json();
       if (response.ok) {
+        console.log('Login response data:', data); // سجل للتحقق من البيانات المستلمة
+        console.log('Role received:', data.role); // سجل للتحقق من قيمة data.role
         localStorage.setItem('token', data.token);
         localStorage.setItem('refreshToken', data.refreshToken);
         localStorage.setItem('role', data.role);
