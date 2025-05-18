@@ -12,6 +12,7 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Login form submitted with username:', username); // سجل للتحقق من بدء العملية
     try {
       const response = await fetch('https://school-system-backend-yr14.onrender.com/api/login', {
         method: 'POST',
@@ -21,9 +22,10 @@ function Login() {
         body: JSON.stringify({ username, password }),
       });
 
+      console.log('Response status:', response.status); // سجل للتحقق من حالة الاستجابة
       const data = await response.json();
+      console.log('Login response data:', data); // سجل للتحقق من البيانات المستلمة
       if (response.ok) {
-        console.log('Login response data:', data); // سجل للتحقق من البيانات المستلمة
         console.log('Role received:', data.role); // سجل للتحقق من قيمة data.role
         localStorage.setItem('token', data.token);
         localStorage.setItem('refreshToken', data.refreshToken);
@@ -32,13 +34,17 @@ function Login() {
         localStorage.setItem('division', data.division);
         alert('Login successful!');
         if (data.role === 'DepartmentHead') {
+          console.log('Navigating to /department-head-results'); // سجل للتحقق من التوجيه
           navigate('/department-head-results');
         } else if (data.role === 'Registrar') {
+          console.log('Navigating to /registrar-students'); // سجل للتحقق من التوجيه
           navigate('/registrar-students');
         } else {
+          console.log('Navigating to / (default route)'); // سجل للتحقق من التوجيه
           navigate('/');
         }
       } else {
+        console.log('Login failed with error:', data.error); // سجل للتحقق من الخطأ
         setError(data.error || 'Login failed. Please try again.');
       }
     } catch (error) {
