@@ -16,6 +16,16 @@ function RegistrarStudents() {
   const [stageFilter, setStageFilter] = useState('');
   const [levelFilter, setLevelFilter] = useState('');
 
+  // دالة لتنسيق التاريخ إلى صيغة DD-MM-YYYY
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // الأشهر تبدأ من 0
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
   const refreshToken = async () => {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {
@@ -134,7 +144,7 @@ function RegistrarStudents() {
     const exportData = filteredStudents.map(student => ({
       'Student Name': student.name || 'N/A',
       'National ID': student.nationalId || 'N/A',
-      'Birth Date': student.birthDate || 'N/A',
+      'Birth Date': formatDate(student.birthDate), // تنسيق تاريخ الميلاد
       'Nationality': student.nationality || 'N/A',
       "Father's Phone": student.fatherPhone || 'N/A',
       "Mother's Phone": student.motherPhone || 'N/A',
@@ -172,7 +182,7 @@ function RegistrarStudents() {
     const data = filteredStudents.map(student => ({
       studentName: student.name || 'N/A',
       nationalId: student.nationalId || 'N/A',
-      birthDate: student.birthDate || 'N/A',
+      birthDate: formatDate(student.birthDate), // تنسيق تاريخ الميلاد
       nationality: student.nationality || 'N/A',
       fatherPhone: student.fatherPhone || 'N/A',
       motherPhone: student.motherPhone || 'N/A',
@@ -331,7 +341,7 @@ function RegistrarStudents() {
                   <tr key={index}>
                     <td>{student.name || 'N/A'}</td>
                     <td>{student.nationalId || 'N/A'}</td>
-                    <td>{student.birthDate || 'N/A'}</td>
+                    <td>{formatDate(student.birthDate)}</td>
                     <td>{student.nationality || 'N/A'}</td>
                     <td>{student.fatherPhone || 'N/A'}</td>
                     <td>{student.motherPhone || 'N/A'}</td>
