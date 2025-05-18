@@ -5,7 +5,7 @@ import bgImage from './bg1.jpg';
 import './HomePage.css';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable'; // استيراد autoTable مباشرة
 
 function RegistrarStudents() {
   const navigate = useNavigate();
@@ -155,7 +155,7 @@ function RegistrarStudents() {
   const exportToPDF = () => {
     const doc = new jsPDF();
     doc.text('Students Data', 10, 10);
-    doc.autoTable({
+    autoTable(doc, { // استخدام autoTable مباشرة كدالة
       head: [['Student Name', 'Full Name (Arabic)', 'Full Name (English)', 'National ID', 'Birth Date', 'Nationality', "Father's Phone", "Mother's Phone", 'Division', 'Stage', 'Level']],
       body: filteredStudents.map(student => [
         student.name || 'N/A',
