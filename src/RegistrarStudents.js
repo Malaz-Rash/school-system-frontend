@@ -133,8 +133,6 @@ function RegistrarStudents() {
   const exportToExcel = () => {
     const exportData = filteredStudents.map(student => ({
       'Student Name': student.name || 'N/A',
-      'Full Name (Arabic)': student.fullNameAr || 'N/A',
-      'Full Name (English)': student.fullNameEn || 'N/A',
       'National ID': student.nationalId || 'N/A',
       'Birth Date': student.birthDate || 'N/A',
       'Nationality': student.nationality || 'N/A',
@@ -151,35 +149,28 @@ function RegistrarStudents() {
     XLSX.writeFile(workbook, 'students_data.xlsx');
   };
 
-  // دالة لتصدير البيانات إلى PDF مع دعم اللغة العربية وتحسين التنسيق
+  // دالة لتصدير البيانات إلى PDF
   const exportToPDF = () => {
     const doc = new jsPDF({
-      orientation: 'landscape', // استخدام الاتجاه الأفقي لتتناسب مع عدد الأعمدة
+      orientation: 'landscape',
     });
 
-    // إضافة عنوان الملف
     doc.text('Students Data', 10, 10);
 
-    // تحديد الأعمدة مع عرض مخصص لكل عمود
     const columns = [
-      { header: 'Student Name', dataKey: 'studentName', width: 30 },
-      { header: 'Full Name (Arabic)', dataKey: 'fullNameAr', width: 30 },
-      { header: 'Full Name (English)', dataKey: 'fullNameEn', width: 30 },
-      { header: 'National ID', dataKey: 'nationalId', width: 20 },
-      { header: 'Birth Date', dataKey: 'birthDate', width: 20 },
-      { header: 'Nationality', dataKey: 'nationality', width: 20 },
-      { header: "Father's Phone", dataKey: 'fatherPhone', width: 20 },
-      { header: "Mother's Phone", dataKey: 'motherPhone', width: 20 },
-      { header: 'Division', dataKey: 'division', width: 20 },
-      { header: 'Stage', dataKey: 'stage', width: 20 },
-      { header: 'Level', dataKey: 'level', width: 20 },
+      { header: 'Student Name', dataKey: 'studentName', width: 40 },
+      { header: 'National ID', dataKey: 'nationalId', width: 25 },
+      { header: 'Birth Date', dataKey: 'birthDate', width: 25 },
+      { header: 'Nationality', dataKey: 'nationality', width: 25 },
+      { header: "Father's Phone", dataKey: 'fatherPhone', width: 25 },
+      { header: "Mother's Phone", dataKey: 'motherPhone', width: 25 },
+      { header: 'Division', dataKey: 'division', width: 25 },
+      { header: 'Stage', dataKey: 'stage', width: 25 },
+      { header: 'Level', dataKey: 'level', width: 25 },
     ];
 
-    // تحضير البيانات
     const data = filteredStudents.map(student => ({
       studentName: student.name || 'N/A',
-      fullNameAr: student.fullNameAr || 'N/A',
-      fullNameEn: student.fullNameEn || 'N/A',
       nationalId: student.nationalId || 'N/A',
       birthDate: student.birthDate || 'N/A',
       nationality: student.nationality || 'N/A',
@@ -190,7 +181,6 @@ function RegistrarStudents() {
       level: student.level || 'N/A',
     }));
 
-    // إعدادات autoTable مع دعم RTL وتحسين التنسيق
     autoTable(doc, {
       columns: columns,
       body: data,
@@ -199,33 +189,25 @@ function RegistrarStudents() {
       styles: {
         fontSize: 10,
         cellPadding: 2,
-        overflow: 'linebreak', // السماح بالالتفاف التلقائي للنصوص الطويلة
-        halign: 'right', // محاذاة النصوص إلى اليمين لدعم اللغة العربية
+        overflow: 'linebreak',
+        halign: 'right',
         valign: 'middle',
       },
       headStyles: {
         fillColor: [200, 200, 200],
         textColor: [0, 0, 0],
-        halign: 'right', // محاذاة رأس الجدول إلى اليمين
+        halign: 'right',
       },
       columnStyles: {
-        studentName: { cellWidth: 30 },
-        fullNameAr: { cellWidth: 30 },
-        fullNameEn: { cellWidth: 30 },
-        nationalId: { cellWidth: 20 },
-        birthDate: { cellWidth: 20 },
-        nationality: { cellWidth: 20 },
-        fatherPhone: { cellWidth: 20 },
-        motherPhone: { cellWidth: 20 },
-        division: { cellWidth: 20 },
-        stage: { cellWidth: 20 },
-        level: { cellWidth: 20 },
-      },
-      didDrawCell: (data) => {
-        // لضمان أن النصوص العربية تظهر بشكل صحيح (إذا كان هناك دعم إضافي للخطوط)
-        if (data.column.dataKey === 'fullNameAr') {
-          doc.setTextColor(0, 0, 0);
-        }
+        studentName: { cellWidth: 40 },
+        nationalId: { cellWidth: 25 },
+        birthDate: { cellWidth: 25 },
+        nationality: { cellWidth: 25 },
+        fatherPhone: { cellWidth: 25 },
+        motherPhone: { cellWidth: 25 },
+        division: { cellWidth: 25 },
+        stage: { cellWidth: 25 },
+        level: { cellWidth: 25 },
       },
     });
 
@@ -334,8 +316,6 @@ function RegistrarStudents() {
               <thead>
                 <tr>
                   <th>Student Name</th>
-                  <th>Full Name (Arabic)</th>
-                  <th>Full Name (English)</th>
                   <th>National ID</th>
                   <th>Birth Date</th>
                   <th>Nationality</th>
@@ -350,8 +330,6 @@ function RegistrarStudents() {
                 {filteredStudents.map((student, index) => (
                   <tr key={index}>
                     <td>{student.name || 'N/A'}</td>
-                    <td>{student.fullNameAr || 'N/A'}</td>
-                    <td>{student.fullNameEn || 'N/A'}</td>
                     <td>{student.nationalId || 'N/A'}</td>
                     <td>{student.birthDate || 'N/A'}</td>
                     <td>{student.nationality || 'N/A'}</td>
